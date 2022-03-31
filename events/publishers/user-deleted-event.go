@@ -4,7 +4,7 @@ import (
 	"github.com/oceano-dev/microservices-go-common/events"
 )
 
-type IUserDeletedEvent interface {
+type UserDeletedEvent interface {
 	Publish(data []byte) error
 }
 

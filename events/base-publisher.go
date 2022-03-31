@@ -1,25 +1,27 @@
 package events
 
-import "github.com/nats-io/stan.go"
+import (
+	"github.com/nats-io/stan.go"
+)
 
 type IPublisher interface {
 	Publish(subject Subject, data []byte) error
 }
 
 type publisher struct {
-	client stan.Conn
+	stan stan.Conn
 }
 
 func NewPublisher(
-	client stan.Conn,
+	stan stan.Conn,
 ) *publisher {
 	return &publisher{
-		client: client,
+		stan: stan,
 	}
 }
 
 func (p *publisher) Publish(subject Subject, data []byte) error {
-	err := p.client.Publish(string(subject), data)
+	err := p.stan.Publish(string(subject), data)
 	if err != nil {
 		return err
 	}
