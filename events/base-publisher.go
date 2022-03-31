@@ -4,7 +4,7 @@ import (
 	"github.com/nats-io/stan.go"
 )
 
-type IPublisher interface {
+type Publisher interface {
 	Publish(subject Subject, data []byte) error
 }
 

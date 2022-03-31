@@ -11,7 +11,7 @@ const (
 	ackWait = 5 * time.Second
 )
 
-type IListener interface {
+type Listener interface {
 	Listener(subject Subject, queueGroupName string, handler stan.MsgHandler)
 }
 
