@@ -1,17 +1,19 @@
 package publishers
 
-import "github.com/oceano-dev/microservices-go-common/events"
+import (
+	"github.com/oceano-dev/microservices-go-common/events"
+)
 
-type Publishers interface {
-	UserDeletedEvent(subject events.Subject, data []byte) error
+type IUserDeletedEvent interface {
+	Publish(subject events.Subject, data []byte) error
 }
 
-type publishers struct {
-	publisher events.Publisher
+type userDeletedEvent struct {
+	publisher events.IPublisher
 }
 
-func (p publishers) UserDeletedEvent(subject events.Subject, data []byte) error {
-	err := p.publisher.Publish(events.CustomerDeleted, data)
+func (u *userDeletedEvent) Publish(data []byte) error {
+	err := u.publisher.Publish(events.CustomerDeleted, data)
 	if err != nil {
 		return err
 	}

@@ -2,7 +2,7 @@ package events
 
 import "github.com/nats-io/stan.go"
 
-type Publisher interface {
+type IPublisher interface {
 	Publish(subject Subject, data []byte) error
 }
 
