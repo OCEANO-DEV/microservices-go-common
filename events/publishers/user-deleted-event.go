@@ -5,7 +5,7 @@ import (
 )
 
 type IUserDeletedEvent interface {
-	Publish(subject events.Subject, data []byte) error
+	Publish(data []byte) error
 }
 
 type userDeletedEvent struct {
