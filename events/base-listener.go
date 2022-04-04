@@ -16,19 +16,19 @@ type Listener interface {
 }
 
 type listener struct {
-	client stan.Conn
+	stan stan.Conn
 }
 
 func NewListener(
-	client stan.Conn,
+	stan stan.Conn,
 ) *listener {
 	return &listener{
-		client: client,
+		stan: stan,
 	}
 }
 
 func (l *listener) Listener(subject Subject, queueGroupName string, handler stan.MsgHandler) {
-	_, err := l.client.QueueSubscribe(
+	_, err := l.stan.QueueSubscribe(
 		string(subject),
 		queueGroupName,
 		handler,
@@ -39,7 +39,7 @@ func (l *listener) Listener(subject Subject, queueGroupName string, handler stan
 	)
 	if err != nil {
 		fmt.Println(fmt.Errorf("Subject: %v, QueueSubscribe: %v, Error: %v", string(subject), queueGroupName, err))
-		if err := l.client.Close(); err != nil {
+		if err := l.stan.Close(); err != nil {
 			fmt.Println(fmt.Errorf("Subject: %v, conn.Close error: %v", string(subject), err))
 		}
 	}
