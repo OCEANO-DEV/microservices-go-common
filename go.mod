@@ -10,6 +10,8 @@ require (
 
 require (
 	github.com/fsnotify/fsnotify v1.5.1 // indirect
+	github.com/go-logr/logr v1.2.3 // indirect
+	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/magiconair/properties v1.8.5 // indirect
@@ -25,6 +27,8 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
+	go.opentelemetry.io/otel/sdk v1.6.1 // indirect
+	go.opentelemetry.io/otel/trace v1.6.1 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
@@ -45,6 +49,8 @@ require (
 	github.com/spf13/viper v1.10.1
 	github.com/twinj/uuid v1.0.0
 	github.com/ugorji/go/codec v1.1.7 // indirect
+	go.opentelemetry.io/otel v1.6.1
+	go.opentelemetry.io/otel/exporters/jaeger v1.6.1
 	golang.org/x/crypto v0.0.0-20220307211146-efcb8507fb70 // indirect
 	golang.org/x/sys v0.0.0-20220307203707-22a9840ba4d7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
