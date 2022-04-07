@@ -99,7 +99,10 @@ type JaegerConfig struct {
 
 func LoadConfig(production bool, path string) *Config {
 	viper.AddConfigPath(path)
-	viper.SetConfigName("config")
+	viper.SetConfigName("config-dev")
+	if production {
+		viper.SetConfigName("config-prod")
+	}
 	viper.SetConfigType("json")
 
 	err := viper.ReadInConfig()
