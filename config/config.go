@@ -40,8 +40,9 @@ type CertificatesConfig struct {
 }
 
 type TokenConfig struct {
-	MinutesToExpireToken      int `json:"minutesToExpireToken"`
-	HoursToExpireRefreshToken int `json:"hoursToExpireRefreshToken"`
+	Issuer                    string `json:"issuer"`
+	MinutesToExpireToken      int    `json:"minutesToExpireToken"`
+	HoursToExpireRefreshToken int    `json:"hoursToExpireRefreshToken"`
 }
 
 type SecurityKeysConfig struct {
