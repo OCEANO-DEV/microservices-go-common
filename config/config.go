@@ -50,6 +50,8 @@ type SecurityKeysConfig struct {
 	MinutesToRefreshPrivateKeys int    `json:"minutesToRefreshPrivateKeys"`
 	SavePublicKeyToFile         bool   `json:"savePublicKeyToFile"`
 	FileECPPublicKey            string `json:"fileECPPublicKey"`
+	HostPublicKeys              string `json:"hostPublicKeys"`
+	PathGetPublicKeys           string `json:"pathGetPublicKeys"`
 }
 
 type CompanyConfig struct {
