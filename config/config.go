@@ -123,7 +123,7 @@ func LoadConfig(production bool, path string) *Config {
 	if config.Production {
 		config.MongoDB.Host = os.Getenv("MONGO_HOST")
 		config.MongoDB.Port = os.Getenv("MONGO_PORT")
-		if config.SMTPServer.Host != "" {
+		if config.SMTPServer.Host == "" {
 			config.SMTPServer.Host = os.Getenv("SMTP_HOST")
 		}
 		config.Nats.Url = os.Getenv("NATS_URL")
