@@ -71,7 +71,7 @@ type SMTPConfig struct {
 	TLS          bool   `json:"tls"`
 	Username     string `json:"username"`
 	Password     string `json:"password"`
-	EmailDefault string `json:"emailDefault"`
+	SupportEmail string `json:"supportEmail"`
 }
 
 type PrometheusConfig struct {
@@ -123,8 +123,9 @@ func LoadConfig(production bool, path string) *Config {
 	if config.Production {
 		config.MongoDB.Host = os.Getenv("MONGO_HOST")
 		config.MongoDB.Port = os.Getenv("MONGO_PORT")
-		if config.SMTPServer.Host == "" {
-			config.SMTPServer.Host = os.Getenv("SMTP_HOST")
+		smtphost := os.Getenv("SMTP_HOST")
+		if smtphost != "" {
+			config.SMTPServer.Host = smtphost
 		}
 		config.Nats.Url = os.Getenv("NATS_URL")
 		config.Nats.ClientId += "_" + uuid.NewV4().String()
