@@ -48,6 +48,7 @@ type TokenConfig struct {
 type SecurityKeysConfig struct {
 	DaysToExpireKeys            int    `json:"daysToExpireKeys"`
 	MinutesToRefreshPrivateKeys int    `json:"minutesToRefreshPrivateKeys"`
+	MinutesToRefreshPublicKeys  int    `json:"minutesToRefreshPublicKeys"`
 	SavePublicKeyToFile         bool   `json:"savePublicKeyToFile"`
 	FileECPPublicKey            string `json:"fileECPPublicKey"`
 	EndPointGetPublicKeys       string `json:"endPointGetPublicKeys"`
