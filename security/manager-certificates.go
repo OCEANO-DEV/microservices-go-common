@@ -12,6 +12,8 @@ import (
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/helpers"
 	"github.com/oceano-dev/microservices-go-common/services"
+
+	"github.com/eapache/go-resiliency/breaker"
 )
 
 type ManagerCertificates struct {
@@ -63,31 +65,79 @@ func (m *ManagerCertificates) GetCertificate() error {
 }
 
 func (m *ManagerCertificates) refreshCertificate() error {
-	cert, err := m.service.GetCertificate()
+	err := m.requestCertificate()
 	if err != nil {
 		return err
 	}
 
-	if cert != nil {
-		err := m.createFile(cert, certPath)
-		if err != nil {
-			return err
-		}
-	}
-
-	key, err := m.service.GetCertificateKey()
+	err = m.requestCertificateKey()
 	if err != nil {
 		return err
-	}
-
-	if key != nil {
-		err := m.createFile(key, keyPath)
-		if err != nil {
-			return err
-		}
 	}
 
 	return nil
+}
+
+func (m *ManagerCertificates) requestCertificate() error {
+	b := breaker.New(3, 1, 5*time.Second)
+	for {
+		var cert []byte
+		var err error
+		err = b.Run(func() error {
+			cert, err = m.service.GetCertificate()
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+
+		switch err {
+		case nil:
+			if cert == nil {
+				return errors.New("certificate not found")
+			}
+
+			err := m.createFile(cert, certPath)
+			if err != nil {
+				return err
+			}
+		case breaker.ErrBreakerOpen:
+			return err
+		default:
+		}
+	}
+}
+
+func (m *ManagerCertificates) requestCertificateKey() error {
+	b := breaker.New(3, 1, 5*time.Second)
+	for {
+		var key []byte
+		var err error
+		err = b.Run(func() error {
+			key, err = m.service.GetCertificateKey()
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+
+		switch err {
+		case nil:
+			if key == nil {
+				return errors.New("certificate key not found")
+			}
+
+			err := m.createFile(key, keyPath)
+			if err != nil {
+				return err
+			}
+		case breaker.ErrBreakerOpen:
+			return err
+		default:
+		}
+	}
 }
 
 func (m *ManagerCertificates) getCertificateKey() ([]byte, error) {
