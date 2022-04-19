@@ -16,7 +16,7 @@ type ManagerSecurityKeys struct {
 
 var (
 	keys              []*models.PublicKey
-	refreshPublicKeys = time.Now()
+	refreshPublicKeys = time.Now().UTC()
 )
 
 func NewManagerSecurityKeys(
