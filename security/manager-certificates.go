@@ -102,9 +102,10 @@ func (m *ManagerCertificates) requestCertificate() error {
 			if err != nil {
 				return err
 			}
+
+			return nil
 		case breaker.ErrBreakerOpen:
 			return err
-		default:
 		}
 	}
 }
@@ -133,9 +134,10 @@ func (m *ManagerCertificates) requestCertificateKey() error {
 			if err != nil {
 				return err
 			}
+
+			return nil
 		case breaker.ErrBreakerOpen:
 			return err
-		default:
 		}
 	}
 }
