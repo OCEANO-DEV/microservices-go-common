@@ -3,6 +3,7 @@ package services
 import (
 	"context"
 	"crypto/tls"
+	"encoding/base64"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -61,7 +62,8 @@ func (s *certificateService) requestCertificate(ctx context.Context) ([]byte, er
 		},
 	}
 
-	endPoint := fmt.Sprintf("%s/hash=%s", s.config.Certificates.EndPointGetCertificate, s.config.Certificates.HashPermissionEndPoint)
+	hash := base64.StdEncoding.EncodeToString([]byte(s.config.Certificates.PasswordPermissionEndPoint))
+	endPoint := fmt.Sprintf("%s/hash=%s", s.config.Certificates.EndPointGetCertificate, hash)
 	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
 	if err != nil {
 		log.Println("request:", err)
@@ -92,7 +94,8 @@ func (s *certificateService) requestCertificateKey(ctx context.Context) ([]byte,
 		},
 	}
 
-	endPoint := fmt.Sprintf("%s/hash=%s", s.config.Certificates.EndPointGetCertificateKey, s.config.Certificates.HashPermissionEndPoint)
+	hash := base64.StdEncoding.EncodeToString([]byte(s.config.Certificates.PasswordPermissionEndPoint))
+	endPoint := fmt.Sprintf("%s/hash=%s", s.config.Certificates.EndPointGetCertificateKey, hash)
 	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
 	if err != nil {
 		log.Println("request:", err)
