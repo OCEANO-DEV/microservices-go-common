@@ -64,6 +64,10 @@ func (m *ManagerCertificates) GetCertificate() error {
 	return nil
 }
 
+func (m *ManagerCertificates) GetPathsCertificateAndKey() (string, string) {
+	return certPath, keyPath
+}
+
 func (m *ManagerCertificates) refreshCertificate() error {
 	err := m.requestCertificate()
 	if err != nil {

@@ -2,7 +2,6 @@ package tasks
 
 import (
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -23,8 +22,6 @@ func NewVerifyPublicKeysTask(
 		manager: manager,
 	}
 }
-
-var mux sync.Mutex
 
 func (task *VerifyPublicKeysTask) ReloadPublicKeys() {
 	ticker := time.NewTicker(1 * time.Second)
