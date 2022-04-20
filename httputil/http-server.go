@@ -19,15 +19,16 @@ type HttpServer interface {
 type httpServer struct {
 	config              *config.Config
 	router              *gin.Engine
-	managerCertificates security.ManagerCertificates
+	managerCertificates *security.ManagerCertificates
 }
 
 var mux sync.Mutex
+var srv *http.Server
 
 func NewHttpServer(
 	config *config.Config,
 	router *gin.Engine,
-	managerCertificates security.ManagerCertificates,
+	managerCertificates *security.ManagerCertificates,
 ) *httpServer {
 	return &httpServer{
 		config:              config,
@@ -37,14 +38,16 @@ func NewHttpServer(
 }
 
 func (s *httpServer) RunTLSServer() error {
-	srv := s.mountTLSServer()
-
 	var err error
-	go func() {
-		if err = srv.ListenAndServeTLS("", ""); err != nil && err != http.ErrServerClosed {
-			log.Fatalf("err: %s\n", err)
-		}
-	}()
+	if srv == nil {
+		srv = s.mountTLSServer()
+
+		go func() {
+			if err = srv.ListenAndServeTLS("", ""); err != nil && err != http.ErrServerClosed {
+				log.Fatalf("err: %s\n", err)
+			}
+		}()
+	}
 
 	return err
 }
