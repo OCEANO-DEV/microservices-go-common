@@ -15,7 +15,7 @@ type ManagerSecurityKeys struct {
 }
 
 var (
-	keys              []*models.PublicKey
+	publicKeys        []*models.PublicKey
 	refreshPublicKeys = time.Now().UTC()
 )
 
@@ -30,7 +30,7 @@ func NewManagerSecurityKeys(
 }
 
 func (m *ManagerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
-	if keys == nil {
+	if publicKeys == nil {
 		m.refreshPublicKeys()
 	}
 
@@ -40,7 +40,7 @@ func (m *ManagerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
 		fmt.Println("refresh public keys")
 	}
 
-	return keys
+	return publicKeys
 }
 
 func (m *ManagerSecurityKeys) refreshPublicKeys() {
@@ -49,7 +49,7 @@ func (m *ManagerSecurityKeys) refreshPublicKeys() {
 		fmt.Println(err)
 	}
 
-	keys = nil
-	keys = append(keys, newestPublicKeys...)
+	publicKeys = nil
+	publicKeys = append(publicKeys, newestPublicKeys...)
 	refreshPublicKeys = time.Now().UTC().Add(time.Minute * time.Duration(m.config.SecurityKeys.MinutesToRefreshPublicKeys))
 }

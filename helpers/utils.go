@@ -11,10 +11,6 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const charset = "abcdefghijklmnopqrstuvwxyz" +
-	"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
-	"!@#$%&*_+"
-
 //EnvVar function is for read .env file
 func EnvVar(key string, defaultVal string) string {
 	godotenv.Load()
@@ -54,10 +50,10 @@ func ConvertImageToBase64(pathImage string) (string, error) {
 }
 
 func GenerateRandomString(length int) string {
-	return stringWithCharset(length, charset)
-}
+	var charset = "abcdefghijklmnopqrstuvwxyz" +
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
+		"!@#$%&*_+"
 
-func stringWithCharset(length int, charset string) string {
 	var seededRand *rand.Rand = rand.New(
 		rand.NewSource(time.Now().UnixNano()))
 
