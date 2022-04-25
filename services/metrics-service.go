@@ -22,7 +22,7 @@ func NewMetricsService(
 	config *config.Config,
 ) (*MetricsService, error) {
 	client := prometheus.NewHistogramVec(prometheus.HistogramOpts{
-		Namespace: "pushgateway",
+		Namespace: config.AppName + "_pushgateway",
 		Subsystem: config.AppName,
 		Name:      "cmd_duration_seconds",
 		Help:      "Client application execution in seconds",
