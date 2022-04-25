@@ -4,12 +4,13 @@ import (
 	"strconv"
 
 	"github.com/oceano-dev/microservices-go-common/metrics"
+	"github.com/oceano-dev/microservices-go-common/services"
 
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
-func Metrics(service metrics.IMetric) gin.HandlerFunc {
+func Metrics(service services.Metrics) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		appMetric := metrics.NewHttpMetrics(c.Request.URL.Path, c.Request.Method)
 		appMetric.Started()
