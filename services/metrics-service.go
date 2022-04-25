@@ -5,11 +5,12 @@ import (
 	"github.com/oceano-dev/microservices-go-common/metrics"
 
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/push"
 )
 
 type Metrics interface {
+	SaveClient(client *metrics.ClientMetrics) error
 	SaveHttp(http *metrics.HttpMetrics)
-	// SaveClient(client *ClientMetrics) error
 }
 
 type MetricsService struct {
@@ -58,9 +59,9 @@ func (service *MetricsService) SaveHttp(http *metrics.HttpMetrics) {
 	service.httpRequestHistogram.WithLabelValues(http.Handler, http.Method, http.StatusCode).Observe(http.Duration)
 }
 
-// func (service *MetricsService) SaveClient(client *metrics.ClientMetrics) error {
-// 	gatewayURL := service.config.Prometheus.PROMETHEUS_PUSHGATEWAY
-// 	service.pHistogram.WithLabelValues(client.Name).Observe(client.Duration)
+func (service *MetricsService) SaveClient(client *metrics.ClientMetrics) error {
+	gatewayURL := service.config.Prometheus.PROMETHEUS_PUSHGATEWAY
+	service.pHistogram.WithLabelValues(client.Name).Observe(client.Duration)
 
-// 	return push.New(gatewayURL, "cmd_job").Collector(service.pHistogram).Push()
-// }
+	return push.New(gatewayURL, "cmd_job").Collector(service.pHistogram).Push()
+}
