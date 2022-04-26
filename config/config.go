@@ -24,6 +24,7 @@ type Config struct {
 	MongoDbExporter MongoDbExporterConfig `json:"mongoDbExporter"`
 	Nats            NatsConfig            `json:"nats"`
 	Jaeger          JaegerConfig          `json:"jaeger"`
+	Grpc            GrpcConfig            `json:"grpc"`
 }
 
 type MongoDBConfig struct {
@@ -102,6 +103,13 @@ type JaegerConfig struct {
 	JaegerEndpoint string `json:"jaegerEndpoint"`
 	ServiceName    string `json:"serviceName"`
 	ServiceVersion string `json:"serviceVersion"`
+}
+
+type GrpcConfig struct {
+	Port              string `json:"port"`
+	MaxConnectionIdle int    `json:"maxConnectionIdle"`
+	MaxConnectionAge  int    `json:"maxConnectionAge"`
+	Timeout           int    `json:"timeout"`
 }
 
 func LoadConfig(production bool, path string) *Config {
