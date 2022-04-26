@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -22,7 +21,6 @@ type httpServer struct {
 	managerCertificates *security.ManagerCertificates
 }
 
-var mux sync.Mutex
 var srv *http.Server
 
 func NewHttpServer(
@@ -65,9 +63,6 @@ func (s *httpServer) mountTLSServer() *http.Server {
 }
 
 func (s *httpServer) getCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	mux.Lock()
-	defer mux.Unlock()
-
 	pathCert, pathKey := s.managerCertificates.GetPathsCertificateAndKey()
 	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
 	if err != nil {
