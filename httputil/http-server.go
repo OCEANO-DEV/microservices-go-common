@@ -37,7 +37,7 @@ func NewHttpServer(
 	}
 }
 
-func (s *httpServer) RunTLSServer() error {
+func (s *httpServer) RunTLSServer() (*http.Server, error) {
 	var err error
 	if srv == nil {
 		srv = s.mountTLSServer()
@@ -49,7 +49,7 @@ func (s *httpServer) RunTLSServer() error {
 		}()
 	}
 
-	return err
+	return srv, err
 }
 
 func (s *httpServer) mountTLSServer() *http.Server {
