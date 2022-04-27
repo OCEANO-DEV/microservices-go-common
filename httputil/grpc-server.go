@@ -1,8 +1,6 @@
 package httputil
 
 import (
-	"crypto/tls"
-	"fmt"
 	"time"
 
 	grpc_middleware "github.com/grpc-ecosystem/go-grpc-middleware"
@@ -14,7 +12,6 @@ import (
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/security"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials"
 	"google.golang.org/grpc/keepalive"
 )
 
@@ -34,15 +31,15 @@ func NewGrpcServer(
 }
 
 func (s *GrpcServer) CreateGrpcServer() (*grpc.Server, error) {
-	pathCert, pathKey := s.managerCertificates.GetPathsCertificateAndKey()
-	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
+	// pathCert, pathKey := s.managerCertificates.GetPathsCertificateAndKey()
+	// cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
+	// if err != nil {
+	// 	fmt.Println(err)
+	// 	return nil, err
+	// }
 
 	grpcServer := grpc.NewServer(
-		grpc.Creds(credentials.NewServerTLSFromCert(&cert)),
+		// grpc.Creds(credentials.NewServerTLSFromCert(&cert)),
 		grpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle: time.Duration(s.config.Grpc.MaxConnectionIdle) * time.Minute,
 			Timeout:           time.Duration(s.config.Grpc.Timeout) * time.Second,
