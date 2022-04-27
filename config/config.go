@@ -25,6 +25,7 @@ type Config struct {
 	Nats            NatsConfig            `json:"nats"`
 	Jaeger          JaegerConfig          `json:"jaeger"`
 	Grpc            GrpcConfig            `json:"grpc"`
+	EmailService    EmailServiceConfig    `json:"emailService"`
 }
 
 type MongoDBConfig struct {
@@ -110,6 +111,10 @@ type GrpcConfig struct {
 	MaxConnectionIdle int    `json:"maxConnectionIdle"`
 	MaxConnectionAge  int    `json:"maxConnectionAge"`
 	Timeout           int    `json:"timeout"`
+}
+
+type EmailServiceConfig struct {
+	Host string `json:"host"`
 }
 
 func LoadConfig(production bool, path string) *Config {
