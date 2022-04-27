@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package src;
+
+option go_package = "emailService/proto";
+
+service EmailService {
+  rpc SendPasswordCode(PasswordCodeReq) returns (PasswordCodeRes) {}
+  rpc SendSupportMessage(SupportMessageReq) returns (SupportMessageRes) {}
+}
+
+message Empty {}
+
+message PasswordCodeReq {
+  string email = 1;
+  string code = 2;
+}
+
+message PasswordCodeRes {
+  string error = 1;
+}
+
+message SupportMessageReq {
+  string message = 1;
+}
+
+message SupportMessageRes {
+  string error = 1;
+}
