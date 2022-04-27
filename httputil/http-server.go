@@ -13,7 +13,7 @@ import (
 )
 
 type HttpServer interface {
-	RunTLSServer() error
+	RunTLSServer() (*http.Server, error)
 }
 
 type httpServer struct {
