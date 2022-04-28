@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/eapache/go-resiliency/retrier"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/models"
@@ -57,11 +58,28 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 		},
 	}
 
-	request, err := http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
+	var request *http.Request
+	var err error
+	r := retrier.New(retrier.ExponentialBackoff(3, 100*time.Millisecond), nil)
+	err = r.RunCtx(ctx, func(ctx context.Context) error {
+		request, err = http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
+		if err != nil {
+			return err
+		}
+
+		return nil
+	})
+
 	if err != nil {
-		log.Println("request:", err)
+		log.Println("request error: ", err)
 		return nil, err
 	}
+
+	// request, err := http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
+	// if err != nil {
+	// 	log.Println("request:", err)
+	// 	return nil, err
+	// }
 
 	response, err := client.Do(request)
 	if err != nil {
