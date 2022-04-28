@@ -2,6 +2,7 @@ package tasks
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -30,7 +31,12 @@ func (task *VerifyPublicKeysTask) ReloadPublicKeys() {
 		for {
 			select {
 			case <-ticker.C:
-				_ = task.manager.GetAllPublicKeys()
+				keys := task.manager.GetAllPublicKeys()
+				if keys == nil {
+					log.Printf("publickeys not success refreshed %s\n", time.Now().UTC())
+					ticker.Reset(15 * time.Second)
+					break
+				}
 
 				fmt.Printf("publickeys success refreshed %s\n", time.Now().UTC())
 				ticker.Reset(1 * time.Hour)

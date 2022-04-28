@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/eapache/go-resiliency/breaker"
 	"github.com/eapache/go-resiliency/retrier"
 	"github.com/lestrrat-go/jwx/jwk"
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -58,35 +59,43 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 		},
 	}
 
-	var request *http.Request
 	var err error
-	r := retrier.New(retrier.ExponentialBackoff(3, 100*time.Millisecond), nil)
-	err = r.RunCtx(ctx, func(ctx context.Context) error {
-		request, err = http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
-		if err != nil {
-			return err
+	request, err := http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
+	if err != nil {
+		log.Println("request error:", err)
+		return nil, err
+	}
+
+	var response *http.Response
+	r := retrier.New(retrier.ConstantBackoff(6, 100*time.Millisecond), nil)
+	err = r.Run(func() error {
+		b := breaker.New(6, 1, 5*time.Second)
+		for {
+			result := b.Run(func() error {
+				response, err = client.Do(request)
+				if err != nil {
+					return err
+				}
+
+				return nil
+			})
+
+			switch result {
+			case nil:
+				return nil
+			case breaker.ErrBreakerOpen:
+				return err
+			default:
+				return err
+			}
 		}
-
-		return nil
 	})
-
-	if err != nil {
-		log.Println("request error: ", err)
-		return nil, err
-	}
-
-	// request, err := http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
-	// if err != nil {
-	// 	log.Println("request:", err)
-	// 	return nil, err
-	// }
-
-	response, err := client.Do(request)
-	if err != nil {
-		log.Println("response:", err)
-		return nil, err
-	}
 	defer response.Body.Close()
+
+	if err != nil {
+		log.Println("response error:", err)
+		return nil, err
+	}
 
 	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
