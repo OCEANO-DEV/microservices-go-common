@@ -90,12 +90,12 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 			}
 		}
 	})
-	defer response.Body.Close()
 
 	if err != nil {
 		log.Println("response error:", err)
 		return nil, err
 	}
+	defer response.Body.Close()
 
 	data, err := ioutil.ReadAll(response.Body)
 	if err != nil {
