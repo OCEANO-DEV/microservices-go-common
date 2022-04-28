@@ -1,4 +1,4 @@
-package httputil
+package proto
 
 import (
 	"time"
@@ -31,15 +31,7 @@ func NewGrpcServer(
 }
 
 func (s *GrpcServer) CreateGrpcServer() (*grpc.Server, error) {
-	// pathCert, pathKey := s.managerCertificates.GetPathsCertificateAndKey()
-	// cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
-	// if err != nil {
-	// 	fmt.Println(err)
-	// 	return nil, err
-	// }
-
 	grpcServer := grpc.NewServer(
-		// grpc.Creds(credentials.NewServerTLSFromCert(&cert)),
 		grpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle: time.Duration(s.config.Grpc.MaxConnectionIdle) * time.Minute,
 			Timeout:           time.Duration(s.config.Grpc.Timeout) * time.Second,

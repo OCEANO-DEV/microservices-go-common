@@ -7,8 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/oceano-dev/microservices-go-common/proto"
-	"github.com/oceano-dev/microservices-go-common/services"
+	proto "github.com/oceano-dev/microservices-go-common/grpc/proto/email"
 
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/httputil"
@@ -16,29 +15,30 @@ import (
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
 )
 
-type VerifyCertificateAndHttpServerTask struct {
-	config   *config.Config
-	manager  *common_security.ManagerCertificates
-	httputil httputil.HttpServer
+type VerifyCertificateWithHttpServerTask struct {
+	config       *config.Config
+	manager      *common_security.ManagerCertificates
+	httputil     httputil.HttpServer
+	emailService *proto.EmailServiceClientGrpc
 }
 
-func NewVerifyCertificateAndHttpServerTask(
+func NewVerifyCertificateWithHttpServerTask(
 	config *config.Config,
 	manager *common_security.ManagerCertificates,
 	httputil httputil.HttpServer,
-) *VerifyCertificateAndHttpServerTask {
-	return &VerifyCertificateAndHttpServerTask{
-		config:   config,
-		manager:  manager,
-		httputil: httputil,
+	emailService *proto.EmailServiceClientGrpc,
+) *VerifyCertificateWithHttpServerTask {
+	return &VerifyCertificateWithHttpServerTask{
+		config:       config,
+		manager:      manager,
+		httputil:     httputil,
+		emailService: emailService,
 	}
 }
 
 var srv *http.Server
-var email *services.EmailServiceClientGrpc
-var grpcClient proto.EmailServiceClient
 
-func (task *VerifyCertificateAndHttpServerTask) ReloadCertificate(ctx context.Context) {
+func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.Context) {
 	ticker := time.NewTicker(1 * time.Second)
 	quit := make(chan struct{})
 	go func() {
@@ -53,7 +53,7 @@ func (task *VerifyCertificateAndHttpServerTask) ReloadCertificate(ctx context.Co
 					err := task.manager.GetCertificate()
 					if err != nil {
 						msg := fmt.Sprintln("EmailService - certificate error: ", err)
-						err := task.sendSupportMessage(msg)
+						err := task.emailService.SendSupportMessage(msg)
 						if err != nil {
 							log.Println(err)
 						}
@@ -84,17 +84,4 @@ func (task *VerifyCertificateAndHttpServerTask) ReloadCertificate(ctx context.Co
 			}
 		}
 	}()
-}
-
-func (task *VerifyCertificateAndHttpServerTask) NewGrpcClient(emailServiceClient proto.EmailServiceClient) {
-	grpcClient = emailServiceClient
-}
-
-func (task *VerifyCertificateAndHttpServerTask) sendSupportMessage(message string) error {
-	err := email.SendSupportMessage(grpcClient, "erro teste")
-	if err != nil {
-		return err
-	}
-
-	return nil
 }

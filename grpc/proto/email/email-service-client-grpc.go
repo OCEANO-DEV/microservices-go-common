@@ -1,17 +1,18 @@
-package services
+package proto
 
 import (
 	"context"
 	"log"
 	"time"
 
-	"github.com/oceano-dev/microservices-go-common/proto"
-
 	"github.com/go-playground/validator/v10"
+	"github.com/oceano-dev/microservices-go-common/config"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
+	grpc "google.golang.org/grpc"
 )
 
 type EmailServiceClientGrpc struct {
+	config *config.Config
 }
 
 type passwordCode struct {
@@ -19,14 +20,26 @@ type passwordCode struct {
 	Code  string
 }
 
-func (s *EmailServiceClientGrpc) SendPasswordCode(client proto.EmailServiceClient, email string, code string) error {
+func NewEmailServiceClientGrpc(
+	config *config.Config,
+) *EmailServiceClientGrpc {
+	return &EmailServiceClientGrpc{
+		config: config,
+	}
+}
+
+var grpcClient EmailServiceClient
+
+func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
 
 	ctx, span := trace.NewSpan(ctx, "emailServiceGrpc.SendPasswordCodeReq")
 	defer span.End()
 
-	req := &proto.PasswordCodeReq{
+	s.verifyClientGrpc()
+
+	req := &PasswordCodeReq{
 		Email: email,
 		Code:  code,
 	}
@@ -38,7 +51,7 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(client proto.EmailServiceClien
 		return err
 	}
 
-	_, err := client.SendPasswordCode(ctx, req)
+	_, err := grpcClient.SendPasswordCode(ctx, req)
 	if err != nil {
 		return err
 	}
@@ -46,14 +59,16 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(client proto.EmailServiceClien
 	return nil
 }
 
-func (s *EmailServiceClientGrpc) SendSupportMessage(client proto.EmailServiceClient, message string) error {
+func (s *EmailServiceClientGrpc) SendSupportMessage(message string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
 	defer cancel()
 
 	ctx, span := trace.NewSpan(ctx, "emailServiceGrpc.SendSupportMessageReq")
 	defer span.End()
 
-	req := &proto.SupportMessageReq{
+	s.verifyClientGrpc()
+
+	req := &SupportMessageReq{
 		Message: message,
 	}
 
@@ -64,10 +79,25 @@ func (s *EmailServiceClientGrpc) SendSupportMessage(client proto.EmailServiceCli
 		return err
 	}
 
-	_, err := client.SendSupportMessage(ctx, req)
+	_, err := grpcClient.SendSupportMessage(ctx, req)
 	if err != nil {
 		return err
 	}
 
 	return nil
+}
+
+func (s *EmailServiceClientGrpc) verifyClientGrpc() {
+	if grpcClient == nil {
+		s.createClientGrpc()
+	}
+}
+
+func (s *EmailServiceClientGrpc) createClientGrpc() {
+	conn, err := grpc.Dial(s.config.EmailService.Host, grpc.WithInsecure(), grpc.WithBlock())
+	if err != nil {
+		log.Fatalf("EmailServiceClientGrpc error connection: %v", err)
+	}
+
+	grpcClient = NewEmailServiceClient(conn)
 }
