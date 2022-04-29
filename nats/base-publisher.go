@@ -1,4 +1,4 @@
-package events
+package nats
 
 import (
 	"github.com/nats-io/stan.go"
