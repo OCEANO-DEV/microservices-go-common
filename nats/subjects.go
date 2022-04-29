@@ -1,4 +1,4 @@
-package events
+package nats
 
 type Subject string
 
