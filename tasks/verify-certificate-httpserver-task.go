@@ -15,25 +15,23 @@ import (
 )
 
 type VerifyCertificateWithHttpServerTask struct {
-	config   *config.Config
-	manager  *security.ManagerCertificates
-	httputil httputil.HttpServer
-	//emailService *proto.EmailServiceClientGrpc
-	emailService services.EmailService
+	config              *config.Config
+	managerCertificates *security.ManagerCertificates
+	emailService        services.EmailService
+	httputil            httputil.HttpServer
 }
 
 func NewVerifyCertificateWithHttpServerTask(
 	config *config.Config,
-	manager *security.ManagerCertificates,
-	httputil httputil.HttpServer,
-	//emailService *proto.EmailServiceClientGrpc,
+	managerCertificates *security.ManagerCertificates,
 	emailService services.EmailService,
+	httputil httputil.HttpServer,
 ) *VerifyCertificateWithHttpServerTask {
 	return &VerifyCertificateWithHttpServerTask{
-		config:       config,
-		manager:      manager,
-		httputil:     httputil,
-		emailService: emailService,
+		config:              config,
+		managerCertificates: managerCertificates,
+		emailService:        emailService,
+		httputil:            httputil,
 	}
 }
 
@@ -49,9 +47,9 @@ func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.C
 				_, span := trace.NewSpan(ctx, "VerifyCertificateTask.ReloadCertificate")
 				defer span.End()
 
-				certIsValid := task.manager.VerifiyLocalCertificateIsValid()
+				certIsValid := task.managerCertificates.VerifiyLocalCertificateIsValid()
 				if !certIsValid {
-					err := task.manager.GetCertificate()
+					err := task.managerCertificates.GetCertificate()
 					if err != nil {
 						msg := fmt.Sprintln("EmailService - certificate error: ", err)
 						err := task.emailService.SendSupportMessage(msg)
