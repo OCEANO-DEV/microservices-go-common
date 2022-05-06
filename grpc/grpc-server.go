@@ -10,23 +10,19 @@ import (
 	grpc_otel "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"github.com/oceano-dev/microservices-go-common/config"
-	"github.com/oceano-dev/microservices-go-common/security"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 )
 
 type GrpcServer struct {
-	config              *config.Config
-	managerCertificates *security.ManagerCertificates
+	config *config.Config
 }
 
 func NewGrpcServer(
 	config *config.Config,
-	managerCertificates *security.ManagerCertificates,
 ) *GrpcServer {
 	return &GrpcServer{
-		config:              config,
-		managerCertificates: managerCertificates,
+		config: config,
 	}
 }
 
