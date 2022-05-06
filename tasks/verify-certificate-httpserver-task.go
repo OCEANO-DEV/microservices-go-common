@@ -7,26 +7,27 @@ import (
 	"net/http"
 	"time"
 
-	proto "github.com/oceano-dev/microservices-go-common/grpc/proto/email"
-
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/httputil"
-	common_security "github.com/oceano-dev/microservices-go-common/security"
+	"github.com/oceano-dev/microservices-go-common/security"
+	"github.com/oceano-dev/microservices-go-common/services"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
 )
 
 type VerifyCertificateWithHttpServerTask struct {
-	config       *config.Config
-	manager      *common_security.ManagerCertificates
-	httputil     httputil.HttpServer
-	emailService *proto.EmailServiceClientGrpc
+	config   *config.Config
+	manager  *security.ManagerCertificates
+	httputil httputil.HttpServer
+	//emailService *proto.EmailServiceClientGrpc
+	emailService services.EmailService
 }
 
 func NewVerifyCertificateWithHttpServerTask(
 	config *config.Config,
-	manager *common_security.ManagerCertificates,
+	manager *security.ManagerCertificates,
 	httputil httputil.HttpServer,
-	emailService *proto.EmailServiceClientGrpc,
+	//emailService *proto.EmailServiceClientGrpc,
+	emailService services.EmailService,
 ) *VerifyCertificateWithHttpServerTask {
 	return &VerifyCertificateWithHttpServerTask{
 		config:       config,
