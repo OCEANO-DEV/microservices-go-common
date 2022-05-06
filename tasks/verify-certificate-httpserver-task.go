@@ -16,14 +16,14 @@ import (
 
 type VerifyCertificateWithHttpServerTask struct {
 	config              *config.Config
-	managerCertificates *security.ManagerCertificates
+	managerCertificates security.ManagerCertificates
 	emailService        services.EmailService
 	httputil            httputil.HttpServer
 }
 
 func NewVerifyCertificateWithHttpServerTask(
 	config *config.Config,
-	managerCertificates *security.ManagerCertificates,
+	managerCertificates security.ManagerCertificates,
 	emailService services.EmailService,
 	httputil httputil.HttpServer,
 ) *VerifyCertificateWithHttpServerTask {
@@ -47,7 +47,7 @@ func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.C
 				_, span := trace.NewSpan(ctx, "VerifyCertificateTask.ReloadCertificate")
 				defer span.End()
 
-				certIsValid := task.managerCertificates.VerifiyLocalCertificateIsValid()
+				certIsValid := task.managerCertificates.VerifyCertificate()
 				if !certIsValid {
 					err := task.managerCertificates.GetCertificate()
 					if err != nil {

@@ -19,7 +19,7 @@ type HttpServer interface {
 type httpServer struct {
 	config              *config.Config
 	router              *gin.Engine
-	managerCertificates *security.ManagerCertificates
+	managerCertificates security.ManagerCertificates
 }
 
 var mux sync.Mutex
@@ -28,7 +28,7 @@ var srv *http.Server
 func NewHttpServer(
 	config *config.Config,
 	router *gin.Engine,
-	managerCertificates *security.ManagerCertificates,
+	managerCertificates security.ManagerCertificates,
 ) *httpServer {
 	return &httpServer{
 		config:              config,

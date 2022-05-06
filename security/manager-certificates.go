@@ -16,7 +16,7 @@ import (
 	"github.com/eapache/go-resiliency/breaker"
 )
 
-type ManagerCertificates struct {
+type managerCertificates struct {
 	config  *config.Config
 	service services.CertificateService
 }
@@ -29,16 +29,16 @@ var (
 func NewManagerCertificates(
 	config *config.Config,
 	service services.CertificateService,
-) *ManagerCertificates {
+) *managerCertificates {
 	certPath = fmt.Sprintf("certs/%s.crt", config.Certificates.FileName)
 	keyPath = fmt.Sprintf("certs/%s.key", config.Certificates.FileName)
-	return &ManagerCertificates{
+	return &managerCertificates{
 		config:  config,
 		service: service,
 	}
 }
 
-func (m *ManagerCertificates) VerifiyLocalCertificateIsValid() bool {
+func (m *managerCertificates) VerifyCertificate() bool {
 	if helpers.FileExists(certPath) && helpers.FileExists(keyPath) {
 		cert, err := m.readCertificate(certPath)
 		if err != nil {
@@ -55,7 +55,7 @@ func (m *ManagerCertificates) VerifiyLocalCertificateIsValid() bool {
 	return false
 }
 
-func (m *ManagerCertificates) GetCertificate() error {
+func (m *managerCertificates) GetCertificate() error {
 	err := m.refreshCertificate()
 	if err != nil {
 		return err
@@ -64,11 +64,15 @@ func (m *ManagerCertificates) GetCertificate() error {
 	return nil
 }
 
-func (m *ManagerCertificates) GetPathsCertificateAndKey() (string, string) {
+func (m *managerCertificates) GetPathsCertificateAndKey() (string, string) {
+	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
+		return "", ""
+	}
+
 	return certPath, keyPath
 }
 
-func (m *ManagerCertificates) refreshCertificate() error {
+func (m *managerCertificates) refreshCertificate() error {
 	err := m.requestCertificate()
 	if err != nil {
 		return err
@@ -82,7 +86,7 @@ func (m *ManagerCertificates) refreshCertificate() error {
 	return nil
 }
 
-func (m *ManagerCertificates) requestCertificate() error {
+func (m managerCertificates) requestCertificate() error {
 	b := breaker.New(3, 1, 5*time.Second)
 	for {
 		var cert []byte
@@ -114,7 +118,7 @@ func (m *ManagerCertificates) requestCertificate() error {
 	}
 }
 
-func (m *ManagerCertificates) requestCertificateKey() error {
+func (m *managerCertificates) requestCertificateKey() error {
 	b := breaker.New(3, 1, 5*time.Second)
 	for {
 		var key []byte
@@ -146,7 +150,7 @@ func (m *ManagerCertificates) requestCertificateKey() error {
 	}
 }
 
-func (m *ManagerCertificates) getCertificateKey() ([]byte, error) {
+func (m *managerCertificates) getCertificateKey() ([]byte, error) {
 	key, err := m.service.GetCertificateKey()
 	if err != nil {
 		return nil, err
@@ -155,7 +159,7 @@ func (m *ManagerCertificates) getCertificateKey() ([]byte, error) {
 	return key, nil
 }
 
-func (m *ManagerCertificates) createFile(filePEM []byte, pathFile string) error {
+func (m *managerCertificates) createFile(filePEM []byte, pathFile string) error {
 	file, err := os.Create(pathFile)
 	if err != nil {
 		os.Exit(1)
@@ -171,7 +175,7 @@ func (m *ManagerCertificates) createFile(filePEM []byte, pathFile string) error 
 	return nil
 }
 
-func (m *ManagerCertificates) readCertificate(pathCertificate string) (*x509.Certificate, error) {
+func (m *managerCertificates) readCertificate(pathCertificate string) (*x509.Certificate, error) {
 	data, err := ioutil.ReadFile(pathCertificate)
 	if err != nil {
 		os.Exit(1)
