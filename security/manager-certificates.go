@@ -40,7 +40,7 @@ func NewManagerCertificates(
 
 func (m *managerCertificates) VerifyCertificate() bool {
 	if helpers.FileExists(certPath) && helpers.FileExists(keyPath) {
-		cert, err := m.readCertificate(certPath)
+		cert, err := m.ReadCertificate(certPath)
 		if err != nil {
 			return false
 		}
@@ -70,6 +70,26 @@ func (m *managerCertificates) GetPathsCertificateAndKey() (string, string) {
 	}
 
 	return certPath, keyPath
+}
+
+func (m *managerCertificates) ReadCertificate(pathCertificate string) (*x509.Certificate, error) {
+	data, err := ioutil.ReadFile(pathCertificate)
+	if err != nil {
+		os.Exit(1)
+		return nil, fmt.Errorf("read Certificate file error")
+	}
+
+	pemBlock, _ := pem.Decode(data)
+	if pemBlock == nil {
+		return nil, fmt.Errorf("decode Certificate error")
+	}
+
+	cert, err := x509.ParseCertificate(pemBlock.Bytes)
+	if err != nil {
+		return nil, err
+	}
+
+	return cert, nil
 }
 
 func (m *managerCertificates) refreshCertificate() error {
@@ -173,24 +193,4 @@ func (m *managerCertificates) createFile(filePEM []byte, pathFile string) error 
 	}
 
 	return nil
-}
-
-func (m *managerCertificates) readCertificate(pathCertificate string) (*x509.Certificate, error) {
-	data, err := ioutil.ReadFile(pathCertificate)
-	if err != nil {
-		os.Exit(1)
-		return nil, fmt.Errorf("read Certificate file error")
-	}
-
-	pemBlock, _ := pem.Decode(data)
-	if pemBlock == nil {
-		return nil, fmt.Errorf("decode Certificate error")
-	}
-
-	cert, err := x509.ParseCertificate(pemBlock.Bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return cert, nil
 }

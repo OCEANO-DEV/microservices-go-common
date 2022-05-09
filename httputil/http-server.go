@@ -2,6 +2,7 @@ package httputil
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"fmt"
 	"log"
 	"net/http"
@@ -53,6 +54,15 @@ func (s *httpServer) RunTLSServer() (*http.Server, error) {
 }
 
 func (s *httpServer) mountTLSServer() *http.Server {
+	certCAPrivateKeyPath := fmt.Sprintf("certs/ca_%s.key", s.config.Certificates.FileName)
+	caCert, err := s.managerCertificates.ReadCertificate(certCAPrivateKeyPath)
+	if err != nil {
+		return nil
+	}
+
+	clientTLSCertPool := x509.NewCertPool()
+	clientTLSCertPool.AddCert(caCert)
+
 	return &http.Server{
 		Addr:    s.config.ListenPort,
 		Handler: s.router,
@@ -60,6 +70,7 @@ func (s *httpServer) mountTLSServer() *http.Server {
 			MinVersion:               tls.VersionTLS12,
 			PreferServerCipherSuites: true,
 			GetCertificate:           s.getCertificate,
+			RootCAs:                  clientTLSCertPool,
 		},
 	}
 }
