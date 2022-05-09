@@ -54,7 +54,7 @@ func (s *httpServer) RunTLSServer() (*http.Server, error) {
 }
 
 func (s *httpServer) mountTLSServer() *http.Server {
-	certCAPrivateKeyPath := fmt.Sprintf("certs/ca_%s.key", s.config.Certificates.FileName)
+	certCAPrivateKeyPath := fmt.Sprintf("certs/ca_%s.crt", s.config.Certificates.FileName)
 	caCert, err := s.managerCertificates.ReadCertificate(certCAPrivateKeyPath)
 	if err != nil {
 		return nil
