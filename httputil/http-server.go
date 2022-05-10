@@ -2,11 +2,9 @@ package httputil
 
 import (
 	"crypto/tls"
-	"crypto/x509"
 	"fmt"
 	"log"
 	"net/http"
-	"sync"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -23,7 +21,6 @@ type httpServer struct {
 	managerCertificates security.ManagerCertificates
 }
 
-var mux sync.Mutex
 var srv *http.Server
 
 func NewHttpServer(
@@ -54,31 +51,18 @@ func (s *httpServer) RunTLSServer() (*http.Server, error) {
 }
 
 func (s *httpServer) mountTLSServer() *http.Server {
-	certCAPrivateKeyPath := fmt.Sprintf("certs/ca_%s.crt", s.config.Certificates.FileName)
-	caCert, err := s.managerCertificates.ReadCertificate(certCAPrivateKeyPath)
-	if err != nil {
-		return nil
-	}
-
-	clientTLSCertPool := x509.NewCertPool()
-	clientTLSCertPool.AddCert(caCert)
-
 	return &http.Server{
 		Addr:    s.config.ListenPort,
 		Handler: s.router,
 		TLSConfig: &tls.Config{
 			MinVersion:               tls.VersionTLS12,
 			PreferServerCipherSuites: true,
-			GetCertificate:           s.getCertificate,
-			RootCAs:                  clientTLSCertPool,
+			GetCertificate:           s.getLocalCertificate,
 		},
 	}
 }
 
-func (s *httpServer) getCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	mux.Lock()
-	defer mux.Unlock()
-
+func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	pathCert, pathKey := s.managerCertificates.GetPathsCertificateAndKey()
 	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
 	if err != nil {

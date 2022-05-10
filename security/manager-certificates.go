@@ -1,12 +1,8 @@
 package security
 
 import (
-	"crypto/x509"
-	"encoding/pem"
 	"errors"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -18,7 +14,7 @@ import (
 
 type managerCertificates struct {
 	config  *config.Config
-	service services.CertificateService
+	service services.CertificatesService
 }
 
 var (
@@ -28,7 +24,7 @@ var (
 
 func NewManagerCertificates(
 	config *config.Config,
-	service services.CertificateService,
+	service services.CertificatesService,
 ) *managerCertificates {
 	certPath = fmt.Sprintf("certs/%s.crt", config.Certificates.FileName)
 	keyPath = fmt.Sprintf("certs/%s.key", config.Certificates.FileName)
@@ -40,7 +36,7 @@ func NewManagerCertificates(
 
 func (m *managerCertificates) VerifyCertificate() bool {
 	if helpers.FileExists(certPath) && helpers.FileExists(keyPath) {
-		cert, err := m.ReadCertificate(certPath)
+		cert, err := m.service.ReadCertificate(certPath)
 		if err != nil {
 			return false
 		}
@@ -70,26 +66,6 @@ func (m *managerCertificates) GetPathsCertificateAndKey() (string, string) {
 	}
 
 	return certPath, keyPath
-}
-
-func (m *managerCertificates) ReadCertificate(pathCertificate string) (*x509.Certificate, error) {
-	data, err := ioutil.ReadFile(pathCertificate)
-	if err != nil {
-		os.Exit(1)
-		return nil, fmt.Errorf("read Certificate file error")
-	}
-
-	pemBlock, _ := pem.Decode(data)
-	if pemBlock == nil {
-		return nil, fmt.Errorf("decode Certificate error")
-	}
-
-	cert, err := x509.ParseCertificate(pemBlock.Bytes)
-	if err != nil {
-		return nil, err
-	}
-
-	return cert, nil
 }
 
 func (m *managerCertificates) refreshCertificate() error {
@@ -126,7 +102,7 @@ func (m managerCertificates) requestCertificate() error {
 				return errors.New("certificate not found")
 			}
 
-			err := m.createFile(cert, certPath)
+			err := helpers.CreateFile(cert, certPath)
 			if err != nil {
 				return err
 			}
@@ -158,7 +134,7 @@ func (m *managerCertificates) requestCertificateKey() error {
 				return errors.New("certificate key not found")
 			}
 
-			err := m.createFile(key, keyPath)
+			err := helpers.CreateFile(key, keyPath)
 			if err != nil {
 				return err
 			}
@@ -177,20 +153,4 @@ func (m *managerCertificates) getCertificateKey() ([]byte, error) {
 	}
 
 	return key, nil
-}
-
-func (m *managerCertificates) createFile(filePEM []byte, pathFile string) error {
-	file, err := os.Create(pathFile)
-	if err != nil {
-		os.Exit(1)
-		return errors.New("invalid file path")
-	}
-
-	_, err = file.Write(filePEM)
-	if err != nil {
-		os.Exit(1)
-		return fmt.Errorf("error when write file %s: %s \n", pathFile, err)
-	}
-
-	return nil
 }

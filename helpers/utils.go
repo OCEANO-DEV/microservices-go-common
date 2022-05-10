@@ -2,6 +2,8 @@ package helpers
 
 import (
 	"encoding/base64"
+	"errors"
+	"fmt"
 	"io/ioutil"
 	"math/rand"
 	"os"
@@ -24,6 +26,22 @@ func EnvVar(key string, defaultVal string) string {
 func FileExists(filepath string) bool {
 	_, err := os.Stat(filepath)
 	return !os.IsNotExist(err)
+}
+
+func CreateFile(data []byte, pathFile string) error {
+	file, err := os.Create(pathFile)
+	if err != nil {
+		os.Exit(1)
+		return errors.New("invalid file path")
+	}
+
+	_, err = file.Write(data)
+	if err != nil {
+		os.Exit(1)
+		return fmt.Errorf("error when write file %s: %s \n", pathFile, err)
+	}
+
+	return nil
 }
 
 func MergeFilters(newFilter map[string]interface{}, filter interface{}) interface{} {

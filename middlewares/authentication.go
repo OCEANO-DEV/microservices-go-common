@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"net/http"
 
-	//security "github.com/oceano-dev/microservices-go-common/security/jwt"
-
 	"github.com/oceano-dev/microservices-go-common/httputil"
 	"github.com/oceano-dev/microservices-go-common/security"
 
@@ -16,23 +14,23 @@ import (
 )
 
 type Authentication struct {
-	logger       *logrus.Logger
-	managerToken *security.ManagerToken
+	logger        *logrus.Logger
+	managerTokens *security.ManagerTokens
 }
 
 func NewAuthentication(
 	logger *logrus.Logger,
-	managerToken *security.ManagerToken,
+	managerTokens *security.ManagerTokens,
 ) *Authentication {
 	return &Authentication{
-		logger:       logger,
-		managerToken: managerToken,
+		logger:        logger,
+		managerTokens: managerTokens,
 	}
 }
 
 func (auth *Authentication) Verify() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, err := auth.managerToken.ReadCookieAccessToken(c)
+		claims, err := auth.managerTokens.ReadCookieAccessToken(c)
 		if err != nil {
 			auth.logger.Error(err.Error())
 			httputil.NewResponseAbort(c, http.StatusUnauthorized, "token is not valid")

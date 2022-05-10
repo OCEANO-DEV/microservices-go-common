@@ -13,22 +13,22 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type ManagerToken struct {
+type ManagerTokens struct {
 	config              *config.Config
 	managerSecurityKeys *ManagerSecurityKeys
 }
 
-func NewManagerToken(
+func NewManagerTokens(
 	config *config.Config,
 	managerSecurityKeys *ManagerSecurityKeys,
-) *ManagerToken {
-	return &ManagerToken{
+) *ManagerTokens {
+	return &ManagerTokens{
 		config:              config,
 		managerSecurityKeys: managerSecurityKeys,
 	}
 }
 
-func (m *ManagerToken) ReadCookieAccessToken(c *gin.Context) (*models.TokenClaims, error) {
+func (m *ManagerTokens) ReadCookieAccessToken(c *gin.Context) (*models.TokenClaims, error) {
 	var err error
 	tokenString, err := c.Cookie("accessToken")
 	if err != nil {
@@ -49,7 +49,7 @@ func (m *ManagerToken) ReadCookieAccessToken(c *gin.Context) (*models.TokenClaim
 	return claims, nil
 }
 
-func (m *ManagerToken) ReadRefreshToken(c *gin.Context, tokenString string) (string, error) {
+func (m *ManagerTokens) ReadRefreshToken(c *gin.Context, tokenString string) (string, error) {
 	var keyFunc = m.getKeyFunc()
 	token, err := jwt.ParseWithClaims(tokenString, &models.TokenClaims{}, keyFunc)
 	if err != nil {
@@ -64,7 +64,7 @@ func (m *ManagerToken) ReadRefreshToken(c *gin.Context, tokenString string) (str
 	return claims.Sub, nil
 }
 
-func (m *ManagerToken) getKeyFunc() jwt.Keyfunc {
+func (m *ManagerTokens) getKeyFunc() jwt.Keyfunc {
 	var mux sync.Mutex
 	mux.Lock()
 	keys := m.managerSecurityKeys.GetAllPublicKeys()
