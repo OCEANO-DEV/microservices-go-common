@@ -2,7 +2,6 @@ package security
 
 import (
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -26,8 +25,7 @@ func NewManagerCertificates(
 	config *config.Config,
 	service services.CertificatesService,
 ) *managerCertificates {
-	certPath = fmt.Sprintf("certs/%s.crt", config.Certificates.FileName)
-	keyPath = fmt.Sprintf("certs/%s.key", config.Certificates.FileName)
+	certPath, keyPath = service.GetPathsCertificateAndKey()
 	return &managerCertificates{
 		config:  config,
 		service: service,
@@ -58,14 +56,6 @@ func (m *managerCertificates) GetCertificate() error {
 	}
 
 	return nil
-}
-
-func (m *managerCertificates) GetPathsCertificateAndKey() (string, string) {
-	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
-		return "", ""
-	}
-
-	return certPath, keyPath
 }
 
 func (m *managerCertificates) refreshCertificate() error {

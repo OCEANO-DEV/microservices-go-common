@@ -8,7 +8,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
-	"github.com/oceano-dev/microservices-go-common/security"
+	"github.com/oceano-dev/microservices-go-common/services"
 )
 
 type HttpServer interface {
@@ -16,9 +16,9 @@ type HttpServer interface {
 }
 
 type httpServer struct {
-	config              *config.Config
-	router              *gin.Engine
-	managerCertificates security.ManagerCertificates
+	config  *config.Config
+	router  *gin.Engine
+	service services.CertificatesService
 }
 
 var srv *http.Server
@@ -26,12 +26,12 @@ var srv *http.Server
 func NewHttpServer(
 	config *config.Config,
 	router *gin.Engine,
-	managerCertificates security.ManagerCertificates,
+	service services.CertificatesService,
 ) *httpServer {
 	return &httpServer{
-		config:              config,
-		router:              router,
-		managerCertificates: managerCertificates,
+		config:  config,
+		router:  router,
+		service: service,
 	}
 }
 
@@ -63,7 +63,7 @@ func (s *httpServer) mountTLSServer() *http.Server {
 }
 
 func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	pathCert, pathKey := s.managerCertificates.GetPathsCertificateAndKey()
+	pathCert, pathKey := s.service.GetPathsCertificateAndKey()
 	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
 	if err != nil {
 		fmt.Println(err)
