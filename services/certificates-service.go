@@ -60,10 +60,6 @@ func (s *certificatesService) GetCertificateKey() ([]byte, error) {
 }
 
 func (s *certificatesService) GetPathsCertificateAndKey() (string, string) {
-	// if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
-	// 	return "", ""
-	// }
-
 	certPath := fmt.Sprintf("certs/%s.crt", s.config.Certificates.FileName)
 	keyPath := fmt.Sprintf("certs/%s.key", s.config.Certificates.FileName)
 
