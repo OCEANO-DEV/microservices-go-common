@@ -2,12 +2,14 @@ package httputil
 
 import (
 	"crypto/tls"
+	"errors"
 	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
+	"github.com/oceano-dev/microservices-go-common/helpers"
 	"github.com/oceano-dev/microservices-go-common/services"
 )
 
@@ -63,8 +65,12 @@ func (s *httpServer) mountTLSServer() *http.Server {
 }
 
 func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	pathCert, pathKey := s.service.GetPathsCertificateAndKey()
-	cert, err := tls.LoadX509KeyPair(pathCert, pathKey)
+	certPath, keyPath := s.service.GetPathsCertificateAndKey()
+	if helpers.FileExists(certPath) && helpers.FileExists(keyPath) {
+		return nil, errors.New("certficate not found")
+	}
+
+	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err

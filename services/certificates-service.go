@@ -14,7 +14,6 @@ import (
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
-	"github.com/oceano-dev/microservices-go-common/helpers"
 )
 
 type CertificatesService interface {
@@ -28,16 +27,9 @@ type certificatesService struct {
 	config *config.Config
 }
 
-var (
-	certPath string
-	keyPath  string
-)
-
 func NewCertificatesService(
 	config *config.Config,
 ) *certificatesService {
-	certPath = fmt.Sprintf("certs/%s.crt", config.Certificates.FileName)
-	keyPath = fmt.Sprintf("certs/%s.key", config.Certificates.FileName)
 	return &certificatesService{
 		config: config,
 	}
@@ -68,9 +60,12 @@ func (s *certificatesService) GetCertificateKey() ([]byte, error) {
 }
 
 func (s *certificatesService) GetPathsCertificateAndKey() (string, string) {
-	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
-		return "", ""
-	}
+	// if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
+	// 	return "", ""
+	// }
+
+	certPath := fmt.Sprintf("certs/%s.crt", s.config.Certificates.FileName)
+	keyPath := fmt.Sprintf("certs/%s.key", s.config.Certificates.FileName)
 
 	return certPath, keyPath
 }
