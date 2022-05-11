@@ -38,7 +38,7 @@ func NewVerifyCertificateWithHttpServerTask(
 var srv *http.Server
 
 func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.Context) {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan struct{})
 	go func() {
 		for {
@@ -76,7 +76,7 @@ func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.C
 					}
 				}
 
-				ticker.Reset(1 * time.Minute)
+				ticker.Reset(time.Duration(task.config.Certificates.MinutesToReloadCertificate) * time.Minute)
 			case <-quit:
 				ticker.Stop()
 				return

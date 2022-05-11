@@ -43,6 +43,7 @@ type CertificatesConfig struct {
 	PasswordPermissionEndPoint string `json:"passwordPermissionEndPoint"`
 	EndPointGetCertificate     string `json:"endPointGetCertificate"`
 	EndPointGetCertificateKey  string `json:"endPointGetCertificateKey"`
+	MinutesToReloadCertificate int    `json:"minutesToReloadCertificate"`
 }
 
 type TokenConfig struct {
