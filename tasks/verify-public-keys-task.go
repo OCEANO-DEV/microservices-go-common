@@ -25,7 +25,7 @@ func NewVerifyPublicKeysTask(
 }
 
 func (task *VerifyPublicKeysTask) ReloadPublicKeys() {
-	ticker := time.NewTicker(1 * time.Second)
+	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan struct{})
 	go func() {
 		for {
