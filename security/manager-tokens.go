@@ -15,12 +15,12 @@ import (
 
 type ManagerTokens struct {
 	config              *config.Config
-	managerSecurityKeys *ManagerSecurityKeys
+	managerSecurityKeys ManagerSecurityKeys
 }
 
 func NewManagerTokens(
 	config *config.Config,
-	managerSecurityKeys *ManagerSecurityKeys,
+	managerSecurityKeys ManagerSecurityKeys,
 ) *ManagerTokens {
 	return &ManagerTokens{
 		config:              config,

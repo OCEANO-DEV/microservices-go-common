@@ -11,12 +11,12 @@ import (
 
 type VerifyPublicKeysTask struct {
 	config  *config.Config
-	manager *security.ManagerSecurityKeys
+	manager security.ManagerSecurityKeys
 }
 
 func NewVerifyPublicKeysTask(
 	config *config.Config,
-	manager *security.ManagerSecurityKeys,
+	manager security.ManagerSecurityKeys,
 ) *VerifyPublicKeysTask {
 	return &VerifyPublicKeysTask{
 		config:  config,

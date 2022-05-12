@@ -9,7 +9,7 @@ import (
 	"github.com/oceano-dev/microservices-go-common/services"
 )
 
-type ManagerSecurityKeys struct {
+type managerSecurityKeys struct {
 	config  *config.Config
 	service services.SecurityKeysService
 }
@@ -22,14 +22,14 @@ var (
 func NewManagerSecurityKeys(
 	config *config.Config,
 	service services.SecurityKeysService,
-) *ManagerSecurityKeys {
-	return &ManagerSecurityKeys{
+) *managerSecurityKeys {
+	return &managerSecurityKeys{
 		config:  config,
 		service: service,
 	}
 }
 
-func (m *ManagerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
+func (m *managerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
 	if publicKeys == nil {
 		m.refreshPublicKeys()
 	}
@@ -43,7 +43,7 @@ func (m *ManagerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
 	return publicKeys
 }
 
-func (m *ManagerSecurityKeys) refreshPublicKeys() {
+func (m *managerSecurityKeys) refreshPublicKeys() {
 	newestPublicKeys, err := m.service.GetAllPublicKeys()
 	if err != nil {
 		fmt.Println(err)
