@@ -14,6 +14,7 @@ type Config struct {
 	ApiVersion      string                `json:"apiVersion"`
 	Endpoint        string                `json:"endpoint"`
 	ListenPort      string                `json:"listenPort"`
+	SystemFolders   map[string]string     `json:"systemFolders"`
 	MongoDB         MongoDBConfig         `json:"mongodb"`
 	Certificates    CertificatesConfig    `json:"certificates"`
 	Token           TokenConfig           `json:"token"`

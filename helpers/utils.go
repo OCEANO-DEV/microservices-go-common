@@ -2,6 +2,7 @@ package helpers
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
@@ -80,4 +81,17 @@ func GenerateRandomString(length int) string {
 		b[i] = charset[seededRand.Intn(len(charset))]
 	}
 	return string(b)
+}
+
+func CreateFolder(folders []string) {
+	jsonStr, _ := json.Marshal(folders)
+
+	var data []string
+	_ = json.Unmarshal(jsonStr, &data)
+
+	for _, name := range data {
+		if _, err := os.Stat(name); err != nil {
+			os.Mkdir(name, os.ModePerm)
+		}
+	}
 }
