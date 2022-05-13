@@ -12,7 +12,7 @@ type Metrics interface {
 	// SaveClient(client *metrics.ClientMetrics) error
 }
 
-type MetricsService struct {
+type metricsService struct {
 	config               *config.Config
 	pHistogram           *prometheus.HistogramVec
 	httpRequestHistogram *prometheus.HistogramVec
@@ -20,7 +20,7 @@ type MetricsService struct {
 
 func NewMetricsService(
 	config *config.Config,
-) (*MetricsService, error) {
+) (*metricsService, error) {
 	client := prometheus.NewHistogramVec(prometheus.HistogramOpts{
 		Namespace: config.AppName + "_pushgateway",
 		Subsystem: config.AppName,
@@ -36,7 +36,7 @@ func NewMetricsService(
 		Buckets:   prometheus.DefBuckets,
 	}, []string{"handler", "method", "code"})
 
-	service := &MetricsService{
+	service := &metricsService{
 		config:               config,
 		pHistogram:           client,
 		httpRequestHistogram: http,
@@ -54,11 +54,11 @@ func NewMetricsService(
 	return service, nil
 }
 
-func (service *MetricsService) SaveHttp(http *metrics.HttpMetrics) {
+func (service *metricsService) SaveHttp(http *metrics.HttpMetrics) {
 	service.httpRequestHistogram.WithLabelValues(http.Handler, http.Method, http.StatusCode).Observe(http.Duration)
 }
 
-// func (service *MetricsService) SaveClient(client *metrics.ClientMetrics) error {
+// func (service *metricsService) SaveClient(client *metrics.ClientMetrics) error {
 // 	gatewayURL := service.config.Prometheus.PROMETHEUS_PUSHGATEWAY
 // 	service.pHistogram.WithLabelValues(client.Name).Observe(client.Duration)
 
