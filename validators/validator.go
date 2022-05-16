@@ -9,15 +9,10 @@ import (
 	ptBR_translations "github.com/go-playground/validator/v10/translations/pt_BR"
 )
 
-type Validator struct{}
-
-var language string
 var validate *validator.Validate
 var trans ut.Translator
 
-func NewValidator(
-	language string,
-) *Validator {
+func NewValidator(language string) {
 	var uni *ut.UniversalTranslator
 	validate = validator.New()
 
@@ -35,11 +30,9 @@ func NewValidator(
 		trans, _ = uni.GetTranslator(language)
 		ptBR_translations.RegisterDefaultTranslations(validate, trans)
 	}
-
-	return &Validator{}
 }
 
-func (v *Validator) Validate(data interface{}) interface{} {
+func Validate(data interface{}) interface{} {
 	err := validate.Struct(data)
 	if err != nil {
 		errors := []string{}
