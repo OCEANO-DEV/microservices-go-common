@@ -6,42 +6,41 @@ import (
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 	en_translations "github.com/go-playground/validator/v10/translations/en"
+	ptBR_translations "github.com/go-playground/validator/v10/translations/pt_BR"
 )
 
-type validators struct {
-	trans ut.Translator
-}
+type Validator struct{}
 
 var language string
+var validate *validator.Validate
+var trans ut.Translator
 
 func NewValidator(
 	language string,
-) *validators {
+) *Validator {
 	var uni *ut.UniversalTranslator
-	var trans ut.Translator
+	validate = validator.New()
 
 	switch language {
 	case "en":
 		uni = ut.New(en.New())
+		trans, _ = uni.GetTranslator(language)
+		ptBR_translations.RegisterDefaultTranslations(validate, trans)
 	case "pt_BR":
 		uni = ut.New(pt_BR.New())
+		trans, _ = uni.GetTranslator(language)
+		en_translations.RegisterDefaultTranslations(validate, trans)
 	default:
 		uni = ut.New(en.New())
+		trans, _ = uni.GetTranslator(language)
+		ptBR_translations.RegisterDefaultTranslations(validate, trans)
 	}
 
-	trans, _ = uni.GetTranslator(language)
-
-	return &validators{
-		trans: trans,
-	}
+	return &Validator{}
 }
 
-func (v *validators) Validate(data interface{}) interface{} {
-	uni := ut.New(en.New())
-	trans, _ := uni.GetTranslator(language)
-	validate := validator.New()
-
-	err := en_translations.RegisterDefaultTranslations(validate, trans)
+func (v *Validator) Validate(data interface{}) interface{} {
+	err := validate.Struct(data)
 	if err != nil {
 		errors := []string{}
 		for _, err := range err.(validator.ValidationErrors) {
