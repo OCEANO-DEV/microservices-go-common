@@ -141,20 +141,17 @@ func LoadConfig(production bool, path string) *Config {
 	config.Production = production
 
 	if config.Production {
-		config.MongoDB.Host = os.Getenv("MONGO_HOST")
-		config.MongoDB.Port = os.Getenv("MONGO_PORT")
 		smtphost := os.Getenv("SMTP_HOST")
 		if smtphost != "" {
 			config.SMTPServer.Host = smtphost
 		}
-		config.Nats.Url = os.Getenv("NATS_URL")
 		config.Nats.ClientId += "_" + uuid.NewV4().String()
 
 		fmt.Printf("ENVIRONMENT: production\n")
 	}
 
 	fmt.Printf("MONGO_HOST: %s\nMONGO_PORT: %s\n", config.MongoDB.Host, config.MongoDB.Port)
-	// fmt.Printf("MONGO_USER: %s\nMONGO_PASSWORD: %s\n", config.MongoDB.User, config.MongoDB.Password)
+	fmt.Printf("NATS_URL: %s\n", config.Nats.Url)
 
 	return config
 }
