@@ -29,10 +29,10 @@ func NewGrpcServer(
 func (s *GrpcServer) CreateGrpcServer() (*grpc.Server, error) {
 	grpcServer := grpc.NewServer(
 		grpc.KeepaliveParams(keepalive.ServerParameters{
-			MaxConnectionIdle: time.Duration(s.config.Grpc.MaxConnectionIdle) * time.Minute,
-			Timeout:           time.Duration(s.config.Grpc.Timeout) * time.Second,
-			MaxConnectionAge:  time.Duration(s.config.Grpc.MaxConnectionAge) * time.Minute,
-			Time:              time.Duration(s.config.Grpc.Timeout) * time.Minute,
+			MaxConnectionIdle: time.Duration(s.config.GrpcServer.MaxConnectionIdle) * time.Minute,
+			Timeout:           time.Duration(s.config.GrpcServer.Timeout) * time.Second,
+			MaxConnectionAge:  time.Duration(s.config.GrpcServer.MaxConnectionAge) * time.Minute,
+			Time:              time.Duration(s.config.GrpcServer.Timeout) * time.Minute,
 		}),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(),

@@ -24,7 +24,7 @@ type Config struct {
 	MongoDbExporter MongoDbExporterConfig `json:"mongoDbExporter"`
 	Nats            NatsConfig            `json:"nats"`
 	Jaeger          JaegerConfig          `json:"jaeger"`
-	Grpc            GrpcConfig            `json:"grpc"`
+	GrpcServer      GrpcServerConfig      `json:"grpcServer"`
 	EmailService    EmailServiceConfig    `json:"emailService"`
 }
 
@@ -107,7 +107,7 @@ type JaegerConfig struct {
 	ServiceVersion string `json:"serviceVersion"`
 }
 
-type GrpcConfig struct {
+type GrpcServerConfig struct {
 	Port              string `json:"port"`
 	MaxConnectionIdle int    `json:"maxConnectionIdle"`
 	MaxConnectionAge  int    `json:"maxConnectionAge"`

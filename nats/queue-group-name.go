@@ -4,4 +4,5 @@ type QueueGroupName string
 
 const (
 	AuthenticationsServiceQueueGroupName QueueGroupName = "authentications-service"
+	CustomersServiceQueueGroupName       QueueGroupName = "customers-service"
 )
