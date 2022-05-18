@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"os"
 
 	"github.com/spf13/viper"
 	"github.com/twinj/uuid"
@@ -141,10 +140,6 @@ func LoadConfig(production bool, path string) *Config {
 	config.Production = production
 
 	if config.Production {
-		smtphost := os.Getenv("SMTP_HOST")
-		if smtphost != "" {
-			config.SMTPServer.Host = smtphost
-		}
 		config.Nats.ClientId += "_" + uuid.NewV4().String()
 
 		fmt.Printf("ENVIRONMENT: production\n")
