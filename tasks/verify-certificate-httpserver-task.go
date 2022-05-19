@@ -38,7 +38,7 @@ func NewVerifyCertificateWithHttpServerTask(
 var srv *http.Server
 
 func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.Context) {
-	ticker := time.NewTicker(5 * time.Second)
+	ticker := time.NewTicker(2500 * time.Millisecond)
 	quit := make(chan struct{})
 	go func() {
 		for {
