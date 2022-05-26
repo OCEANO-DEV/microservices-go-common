@@ -12,7 +12,7 @@ const (
 )
 
 type Listener interface {
-	Listener(subject Subject, queueGroupName string, handler stan.MsgHandler)
+	Listener(subject Subject, queueGroupName QueueGroupName, handler stan.MsgHandler)
 }
 
 type listener struct {
@@ -27,12 +27,12 @@ func NewListener(
 	}
 }
 
-func (l *listener) Listener(subject Subject, queueGroupName string, handler stan.MsgHandler) {
+func (l *listener) Listener(subject Subject, queueGroupName QueueGroupName, handler stan.MsgHandler) {
 	_, err := l.stan.QueueSubscribe(
 		string(subject),
-		queueGroupName,
+		string(queueGroupName),
 		handler,
-		stan.DurableName(queueGroupName),
+		stan.DurableName(string(queueGroupName)),
 		stan.DeliverAllAvailable(),
 		stan.SetManualAckMode(),
 		stan.AckWait(ackWait),
