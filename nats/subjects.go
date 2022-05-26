@@ -9,4 +9,5 @@ const (
 	UserCreated     Subject = "user:created"
 	UserUpdated     Subject = "user:updated"
 	UserDeleted     Subject = "user:deleted"
+	ProductPaid     Subject = "product:paid"
 )
