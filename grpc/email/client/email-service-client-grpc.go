@@ -15,15 +15,6 @@ type EmailServiceClientGrpc struct {
 	config *config.Config
 }
 
-type passwordCode struct {
-	Email string `validate:"required,email"`
-	Code  string `validate:"required"`
-}
-
-type supportMessage struct {
-	Message string `validate:"required"`
-}
-
 func NewEmailServiceClientGrpc(
 	config *config.Config,
 ) *EmailServiceClientGrpc {

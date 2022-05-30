@@ -9,17 +9,15 @@ service EmailService {
   rpc SendSupportMessage(SupportMessageReq) returns (SupportMessageRes) {}
 }
 
-message Empty {}
-
 message PasswordCodeReq {
-  required string email = 1;
-  required string code = 2;
+  string email = 1;
+  string code = 2;
 }
 
 message PasswordCodeRes {}
 
 message SupportMessageReq {
-  required string message = 1;
+  string message = 1;
 }
 
 message SupportMessageRes {}
