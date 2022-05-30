@@ -39,7 +39,7 @@ func (m *managerCertificates) VerifyCertificate() bool {
 			return false
 		}
 
-		if cert == nil || cert.NotAfter.AddDate(0, 0, -7).Sub(time.Now().UTC()) <= 0 {
+		if cert == nil || cert.NotAfter.AddDate(0, 0, -7).Before(time.Now().UTC()) {
 			return false
 		}
 

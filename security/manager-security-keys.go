@@ -34,7 +34,7 @@ func (m *managerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
 		m.refreshPublicKeys()
 	}
 
-	publicKeysRefresh := refreshPublicKeys.Sub(time.Now().UTC()) <= 0
+	publicKeysRefresh := refreshPublicKeys.Before(time.Now().UTC())
 	if publicKeysRefresh {
 		m.refreshPublicKeys()
 		fmt.Println("refresh public keys")
