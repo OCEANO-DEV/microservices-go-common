@@ -16,14 +16,10 @@ message PasswordCodeReq {
   required string code = 2;
 }
 
-message PasswordCodeRes {
-  string error = 2;
-}
+message PasswordCodeRes {}
 
 message SupportMessageReq {
   required string message = 1;
 }
 
-message SupportMessageRes {
-  string error = 1;
-}
+message SupportMessageRes {}
