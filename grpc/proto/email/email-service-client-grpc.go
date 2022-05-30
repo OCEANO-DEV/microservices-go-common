@@ -16,8 +16,12 @@ type EmailServiceClientGrpc struct {
 }
 
 type passwordCode struct {
-	Email string
-	Code  string
+	Email string `validate:"required,email"`
+	Code  string `validate:"required"`
+}
+
+type supportMessage struct {
+	Message string `validate:"required"`
 }
 
 func NewEmailServiceClientGrpc(
