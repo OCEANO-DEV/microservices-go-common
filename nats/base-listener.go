@@ -30,9 +30,9 @@ func NewListener(
 func (l *listener) Listener(subject Subject, queueGroupName string, handler stan.MsgHandler) {
 	_, err := l.stan.QueueSubscribe(
 		string(subject),
-		string(queueGroupName),
+		queueGroupName,
 		handler,
-		stan.DurableName(string(queueGroupName)),
+		stan.DurableName(queueGroupName),
 		stan.DeliverAllAvailable(),
 		stan.SetManualAckMode(),
 		stan.AckWait(ackWait),
