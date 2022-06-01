@@ -26,6 +26,8 @@ type Config struct {
 	Jaeger          JaegerConfig          `json:"jaeger"`
 	GrpcServer      GrpcServerConfig      `json:"grpcServer"`
 	EmailService    EmailServiceConfig    `json:"emailService"`
+	Postgres        PostgresConfig        `json:"postgres"`
+	Redis           RedisConfig           `json:"redis"`
 }
 
 type MongoDBConfig struct {
@@ -116,6 +118,22 @@ type GrpcServerConfig struct {
 
 type EmailServiceConfig struct {
 	Host string `json:"host"`
+}
+
+type PostgresConfig struct {
+	Host     string `json:"host"`
+	Port     string `json:"port"`
+	User     string `json:"user"`
+	Password string `json:"password"`
+	Database string `json:"database"`
+	SSLMode  bool   `json:"sslMode"`
+}
+
+type RedisConfig struct {
+	Addr     string `json:"addr"`
+	Password string `json:"password"`
+	Db       int    `json:"db"`
+	PoolSize int    `json:"poolSize"`
 }
 
 func LoadConfig(production bool, path string) *Config {
