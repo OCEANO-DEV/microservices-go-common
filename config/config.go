@@ -126,7 +126,7 @@ type PostgresConfig struct {
 	User     string `json:"user"`
 	Password string `json:"password"`
 	Database string `json:"database"`
-	SSLMode  bool   `json:"sslMode"`
+	SSLMode  string `json:"sslMode"`
 }
 
 type RedisConfig struct {
