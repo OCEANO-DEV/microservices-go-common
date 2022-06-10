@@ -12,7 +12,7 @@ const (
 )
 
 type Listener interface {
-	Listener(subject Subject, queueGroupName string, handler stan.MsgHandler)
+	Listener(subject string, queueGroupName string, handler stan.MsgHandler)
 }
 
 type listener struct {
@@ -27,9 +27,9 @@ func NewListener(
 	}
 }
 
-func (l *listener) Listener(subject Subject, queueGroupName string, handler stan.MsgHandler) {
+func (l *listener) Listener(subject string, queueGroupName string, handler stan.MsgHandler) {
 	_, err := l.stan.QueueSubscribe(
-		string(subject),
+		subject,
 		queueGroupName,
 		handler,
 		stan.DurableName(queueGroupName),
@@ -38,9 +38,9 @@ func (l *listener) Listener(subject Subject, queueGroupName string, handler stan
 		stan.AckWait(ackWait),
 	)
 	if err != nil {
-		fmt.Println(fmt.Errorf("Subject: %v, QueueSubscribe: %v, Error: %v", string(subject), queueGroupName, err))
+		fmt.Println(fmt.Errorf("Subject: %v, QueueSubscribe: %v, Error: %v", subject, queueGroupName, err))
 		if err := l.stan.Close(); err != nil {
-			fmt.Println(fmt.Errorf("Subject: %v, conn.Close error: %v", string(subject), err))
+			fmt.Println(fmt.Errorf("Subject: %v, conn.Close error: %v", subject, err))
 		}
 	}
 }

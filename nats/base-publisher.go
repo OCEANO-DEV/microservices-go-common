@@ -5,7 +5,7 @@ import (
 )
 
 type Publisher interface {
-	Publish(subject Subject, data []byte) error
+	Publish(subject string, data []byte) error
 }
 
 type publisher struct {
@@ -20,8 +20,8 @@ func NewPublisher(
 	}
 }
 
-func (p *publisher) Publish(subject Subject, data []byte) error {
-	err := p.stan.Publish(string(subject), data)
+func (p *publisher) Publish(subject string, data []byte) error {
+	err := p.stan.Publish(subject, data)
 	if err != nil {
 		return err
 	}
