@@ -9,6 +9,8 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/joho/godotenv"
@@ -94,4 +96,46 @@ func CreateFolder(folders []string) {
 			os.Mkdir(name, os.ModePerm)
 		}
 	}
+}
+
+func NextTime(dailyTime string) (time.Time, error) {
+	timeParts := strings.Split(dailyTime, ":")
+
+	dateNow := time.Now().UTC()
+
+	hour, minute, second, nanosecond := 0, 0, 0, 0
+
+	hour, err := strconv.Atoi(timeParts[0])
+	if err != nil {
+		return time.Time{}, errors.New("Failed to decode time:")
+	}
+
+	if len(timeParts) >= 2 {
+		minute, err = strconv.Atoi(timeParts[1])
+		if err != nil {
+			return time.Time{}, errors.New("Failed to decode time:")
+		}
+	}
+
+	if len(timeParts) >= 3 {
+		second, err = strconv.Atoi(timeParts[2])
+		if err != nil {
+			return time.Time{}, errors.New("Failed to decode time:")
+		}
+	}
+
+	if len(timeParts) == 4 {
+		nanosecond, err = strconv.Atoi(timeParts[3])
+		if err != nil {
+			return time.Time{}, errors.New("Failed to decode time:")
+		}
+	}
+
+	date := time.Date(dateNow.Year(), dateNow.Month(), dateNow.Day(), hour, minute, second, nanosecond, time.UTC)
+
+	if date.Before(dateNow) {
+		date = date.Add(24 * time.Hour)
+	}
+
+	return date, nil
 }
