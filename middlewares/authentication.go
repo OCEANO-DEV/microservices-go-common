@@ -3,6 +3,8 @@ package middlewares
 import (
 	"encoding/json"
 	"net/http"
+	"sort"
+	"strings"
 
 	"github.com/oceano-dev/microservices-go-common/httputil"
 	"github.com/oceano-dev/microservices-go-common/security"
@@ -57,8 +59,25 @@ func (auth *Authentication) Verify() gin.HandlerFunc {
 		data, _ := json.Marshal(claims.Claims)
 		json.Unmarshal(data, &claimsList)
 
+		claimsList = auth.sortClaims(claimsList)
+
 		c.Set("claims", claimsList)
 
 		c.Next()
 	}
+}
+
+func (auth *Authentication) sortClaims(claimsList []interface{}) []interface{} {
+	for key, value := range claimsList {
+		values := value.(map[string]interface{})
+		list := strings.Split(values["value"].(string), ",")
+		sort.Slice(list, func(i, j int) bool {
+			return list[i] < list[j]
+		})
+
+		values["value"] = strings.Join(list, ",")
+		claimsList[key] = values
+	}
+
+	return claimsList
 }

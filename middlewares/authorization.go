@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"net/http"
+	"sort"
 	"strings"
 
 	"github.com/oceano-dev/microservices-go-common/httputil"
@@ -38,10 +39,22 @@ func verifyClaimsPermission(claims []interface{}, claimType string, claimValue s
 	}
 	for _, interator := range claims {
 		values := interator.(map[string]interface{})
-		if values["type"] == sClaimType && strings.Contains(values["value"].(string), sClaimValue) {
+		if values["type"] == sClaimType && strings.Contains(values["value"].(string), sortClaimValue(sClaimValue)) {
 			return true
 		}
 	}
 
 	return false
+}
+
+func sortClaimValue(sClaimsValue string) string {
+	list := strings.Split(sClaimsValue, ",")
+
+	sort.Slice(list, func(i, j int) bool {
+		return list[i] < list[j]
+	})
+
+	claimsList := strings.Join(list, ",")
+
+	return claimsList
 }
