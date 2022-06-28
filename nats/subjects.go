@@ -4,8 +4,11 @@ type Subject string
 
 const (
 	CustomerDeleted Subject = "customer:deleted"
+	OrderPaid       Subject = "order:paid"
+	OrderPayment    Subject = "order:payment"
+	StoreBook       Subject = "store:book"
+	StoreBooked     Subject = "store:booked"
+	StorePaid       Subject = "store:paid"
+	StorePayment    Subject = "store:payment"
 	UserDeleted     Subject = "user:deleted"
-	ProductPayment  Subject = "product:payment"
-	ProductPaid     Subject = "product:paid"
-	ProductBought   Subject = "product:bought"
 )
