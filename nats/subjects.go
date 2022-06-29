@@ -4,6 +4,7 @@ type Subject string
 
 const (
 	CustomerDeleted Subject = "customer:deleted"
+	OrderCreate     Subject = "order:create"
 	OrderPaid       Subject = "order:paid"
 	OrderPayment    Subject = "order:payment"
 	StoreBook       Subject = "store:book"
