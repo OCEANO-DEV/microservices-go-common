@@ -1,12 +1,16 @@
 package helpers
 
 import (
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
+	math "math/rand"
 	"os"
 	"reflect"
 	"strconv"
@@ -75,8 +79,8 @@ func GenerateRandomString(length int) string {
 		"ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789" +
 		"!@#$%&*_+"
 
-	var seededRand *rand.Rand = rand.New(
-		rand.NewSource(time.Now().UnixNano()))
+	var seededRand *math.Rand = math.New(
+		math.NewSource(time.Now().UnixNano()))
 
 	b := make([]byte, length)
 	for i := range b {
@@ -138,4 +142,30 @@ func NextTime(dailyTime string) (time.Time, error) {
 	}
 
 	return date, nil
+}
+
+func Encrypt(msg string, publicKey *rsa.PublicKey) (string, error) {
+	encryptedBytes, err := rsa.EncryptOAEP(
+		sha256.New(),
+		rand.Reader,
+		publicKey,
+		[]byte(msg),
+		nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(encryptedBytes), nil
+}
+
+func Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {
+	decryptedBytes, err := privateKey.Decrypt(
+		nil,
+		encryptedBytes,
+		&rsa.OAEPOptions{Hash: crypto.SHA256})
+	if err != nil {
+		panic(err)
+	}
+
+	return string(decryptedBytes), nil
 }

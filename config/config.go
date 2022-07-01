@@ -18,6 +18,7 @@ type Config struct {
 	Certificates    CertificatesConfig    `json:"certificates"`
 	Token           TokenConfig           `json:"token"`
 	SecurityKeys    SecurityKeysConfig    `json:"securityKeys"`
+	SecurityRSAKeys SecurityRSAKeysConfig `json:"securityRSAKeys"`
 	SMTPServer      SMTPConfig            `json:"smtpServer"`
 	Company         CompanyConfig         `json:"company"`
 	Prometheus      PrometheusConfig      `json:"prometheus"`
@@ -61,6 +62,13 @@ type SecurityKeysConfig struct {
 	SavePublicKeyToFile         bool   `json:"savePublicKeyToFile"`
 	FileECPPublicKey            string `json:"fileECPPublicKey"`
 	EndPointGetPublicKeys       string `json:"endPointGetPublicKeys"`
+}
+
+type SecurityRSAKeysConfig struct {
+	DaysToExpireRSAKeys            int    `json:"daysToExpireRSAKeys"`
+	MinutesToRefreshRSAPrivateKeys int    `json:"minutesToRefreshRSAPrivateKeys"`
+	MinutesToRefreshRSAPublicKeys  int    `json:"minutesToRefreshRSAPublicKeys"`
+	EndPointGetRSAPublicKeys       string `json:"endPointGetRSAPublicKeys"`
 }
 
 type CompanyConfig struct {
