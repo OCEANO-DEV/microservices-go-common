@@ -24,18 +24,22 @@ func NewNats(config *config.Config) (*nats.Conn, error) {
 	return nc, err
 }
 
-func NewJetStream(nc *nats.Conn, name string) (nats.JetStreamContext, error) {
+func NewJetStream(nc *nats.Conn) (nats.JetStreamContext, error) {
+	streamName := "microservices-go"
 	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
 		return nil, err
 	}
 
-	_, err = js.AddStream(&nats.StreamConfig{
-		Name:     name,
-		Subjects: GetSubjects(),
-	})
-	if err != nil {
-		return nil, err
+	stream, _ := js.StreamInfo(streamName)
+	if stream == nil {
+		_, err = js.AddStream(&nats.StreamConfig{
+			Name:     streamName,
+			Subjects: GetSubjects(),
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return js, nil
