@@ -24,7 +24,7 @@ func NewNats(config *config.Config) (*nats.Conn, error) {
 	return nc, err
 }
 
-func NewJetStream(nc *nats.Conn, name string, subjects []string) (nats.JetStreamContext, error) {
+func NewJetStream(nc *nats.Conn, name string) (nats.JetStreamContext, error) {
 	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
 		return nil, err
@@ -32,7 +32,7 @@ func NewJetStream(nc *nats.Conn, name string, subjects []string) (nats.JetStream
 
 	_, err = js.AddStream(&nats.StreamConfig{
 		Name:     name,
-		Subjects: subjects,
+		Subjects: GetSubjects(),
 	})
 	if err != nil {
 		return nil, err
