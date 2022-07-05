@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/nats-io/stan.go"
+	"github.com/nats-io/nats.go"
 	"github.com/oceano-dev/microservices-go-common/config"
 	common_service "github.com/oceano-dev/microservices-go-common/services"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
@@ -26,7 +26,7 @@ func NewCommandErrorHelper(
 	}
 }
 
-func (c CommandErrorHelper) CheckUnmarshal(msg *stan.Msg, err error) error {
+func (c CommandErrorHelper) CheckUnmarshal(msg *nats.Msg, err error) error {
 	if err != nil {
 		log.Printf("error unmarshalling %s command: %v", msg.Subject, err)
 		msgErr := fmt.Sprintf("appName: %s: error unmarshalling command: %s data: %s %s\n", c.config.AppName, msg.Subject, msg.Data, err.Error())
@@ -37,7 +37,7 @@ func (c CommandErrorHelper) CheckUnmarshal(msg *stan.Msg, err error) error {
 	return err
 }
 
-func (c CommandErrorHelper) CheckCommandError(span trace_span.Span, msg *stan.Msg, err error) {
+func (c CommandErrorHelper) CheckCommandError(span trace_span.Span, msg *nats.Msg, err error) {
 	if err != nil {
 		msgErr := fmt.Sprintf("appName: %s: error processing %s: data: %s %s\n", c.config.AppName, msg.Subject, msg.Data, err.Error())
 		trace.FailSpan(span, msgErr)
