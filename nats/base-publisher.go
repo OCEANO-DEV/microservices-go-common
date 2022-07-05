@@ -1,7 +1,13 @@
 package nats
 
 import (
-	"github.com/nats-io/stan.go"
+	"time"
+
+	"github.com/nats-io/nats.go"
+)
+
+const (
+	pubAckWait = 5 * time.Second
 )
 
 type Publisher interface {
@@ -9,19 +15,19 @@ type Publisher interface {
 }
 
 type publisher struct {
-	stan stan.Conn
+	js nats.JetStream
 }
 
 func NewPublisher(
-	stan stan.Conn,
+	js nats.JetStream,
 ) *publisher {
 	return &publisher{
-		stan: stan,
+		js: js,
 	}
 }
 
 func (p *publisher) Publish(subject string, data []byte) error {
-	err := p.stan.Publish(subject, data)
+	_, err := p.js.Publish(subject, data, nats.AckWait(pubAckWait))
 	if err != nil {
 		return err
 	}

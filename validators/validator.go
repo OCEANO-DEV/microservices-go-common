@@ -20,15 +20,15 @@ func NewValidator(language string) {
 	case "en":
 		uni = ut.New(en.New())
 		trans, _ = uni.GetTranslator(language)
-		ptBR_translations.RegisterDefaultTranslations(validate, trans)
+		en_translations.RegisterDefaultTranslations(validate, trans)
 	case "pt_BR":
 		uni = ut.New(pt_BR.New())
 		trans, _ = uni.GetTranslator(language)
-		en_translations.RegisterDefaultTranslations(validate, trans)
+		ptBR_translations.RegisterDefaultTranslations(validate, trans)
 	default:
 		uni = ut.New(en.New())
-		trans, _ = uni.GetTranslator(language)
-		ptBR_translations.RegisterDefaultTranslations(validate, trans)
+		trans, _ = uni.GetTranslator("en")
+		en_translations.RegisterDefaultTranslations(validate, trans)
 	}
 }
 

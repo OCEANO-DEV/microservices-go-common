@@ -4,21 +4,22 @@ import (
 	"log"
 	"time"
 
+	"github.com/nats-io/nats.go"
 	"github.com/oceano-dev/microservices-go-common/config"
-
-	"github.com/nats-io/stan.go"
 )
 
-func NewNats(config *config.Config) (stan.Conn, error) {
-	return stan.Connect(
-		config.Nats.ClusterId,
-		config.Nats.ClientId,
-		stan.ConnectWait(time.Second*time.Duration(config.Nats.ConnectWait)),
-		stan.PubAckWait(time.Second*time.Duration(config.Nats.PubAckWait)),
-		stan.NatsURL(config.Nats.Url),
-		stan.Pings(config.Nats.Interval, config.Nats.MaxOut),
-		stan.SetConnectionLostHandler(func(_ stan.Conn, err error) {
+func NewNats(config *config.Config) (*nats.Conn, error) {
+	nc, err := nats.Connect(
+		config.Nats.Url,
+		nats.Timeout(time.Second*time.Duration(config.Nats.ConnectWait)),
+		nats.PingInterval(time.Second*time.Duration(config.Nats.Interval)),
+		nats.RetryOnFailedConnect(true),
+		nats.MaxReconnects(10),
+		nats.ReconnectWait(5),
+		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
 			log.Fatalf("Connection lost: %v", err)
 		}),
 	)
+
+	return nc, err
 }

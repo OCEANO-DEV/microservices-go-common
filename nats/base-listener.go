@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nats-io/stan.go"
+	"github.com/nats-io/nats.go"
 )
 
 const (
@@ -12,35 +12,32 @@ const (
 )
 
 type Listener interface {
-	Listener(subject string, queueGroupName string, handler stan.MsgHandler)
+	Listener(subject string, queueGroupName string, handler nats.MsgHandler)
 }
 
 type listener struct {
-	stan stan.Conn
+	js nats.JetStream
 }
 
 func NewListener(
-	stan stan.Conn,
+	js nats.JetStream,
 ) *listener {
 	return &listener{
-		stan: stan,
+		js: js,
 	}
 }
 
-func (l *listener) Listener(subject string, queueGroupName string, handler stan.MsgHandler) {
-	_, err := l.stan.QueueSubscribe(
+func (l *listener) Listener(subject string, queueGroupName string, handler func(msg *nats.Msg)) {
+	_, err := l.js.QueueSubscribe(
 		subject,
 		queueGroupName,
 		handler,
-		stan.DurableName(queueGroupName),
-		stan.DeliverAllAvailable(),
-		stan.SetManualAckMode(),
-		stan.AckWait(ackWait),
+		nats.Durable(queueGroupName),
+		nats.DeliverAll(),
+		nats.ManualAck(),
+		nats.AckWait(ackWait),
 	)
 	if err != nil {
 		fmt.Println(fmt.Errorf("Subject: %v, QueueSubscribe: %v, Error: %v", subject, queueGroupName, err))
-		if err := l.stan.Close(); err != nil {
-			fmt.Println(fmt.Errorf("Subject: %v, conn.Close error: %v", subject, err))
-		}
 	}
 }
