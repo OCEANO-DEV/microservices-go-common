@@ -27,7 +27,7 @@ func NewListener(
 	}
 }
 
-func (l *listener) Listener(subject string, queueGroupName string, handler func(msg *nats.Msg)) {
+func (l *listener) Listener(subject string, queueGroupName string, handler nats.MsgHandler) {
 	_, err := l.js.QueueSubscribe(
 		subject,
 		queueGroupName,
