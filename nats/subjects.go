@@ -13,3 +13,17 @@ const (
 	StorePayment    Subject = "store:payment"
 	UserDeleted     Subject = "user:deleted"
 )
+
+func GetSubjects() []string {
+	return []string{
+		string(CustomerDeleted),
+		string(OrderCreate),
+		string(OrderPayment),
+		string(OrderStatus),
+		string(StoreBook),
+		string(StoreBooked),
+		string(StorePaid),
+		string(StorePayment),
+		string(UserDeleted),
+	}
+}
