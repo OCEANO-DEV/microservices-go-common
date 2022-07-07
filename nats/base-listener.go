@@ -12,7 +12,7 @@ const (
 )
 
 type Listener interface {
-	Listener(subject string, queueGroupName string, handler nats.MsgHandler)
+	Listener(subject string, queueGroupName string, durableName string, handler nats.MsgHandler)
 }
 
 type listener struct {
@@ -27,14 +27,14 @@ func NewListener(
 	}
 }
 
-func (l *listener) Listener(subject string, queueGroupName string, handler nats.MsgHandler) {
+func (l *listener) Listener(subject string, queueGroupName string, durableName string, handler nats.MsgHandler) {
 	ticker := time.NewTicker(1500 * time.Millisecond)
 	quit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				err := l.queueSubscribe(subject, queueGroupName, handler)
+				err := l.queueSubscribe(subject, queueGroupName, durableName, handler)
 				if err == nil {
 					<-quit
 				}
@@ -48,12 +48,12 @@ func (l *listener) Listener(subject string, queueGroupName string, handler nats.
 	}()
 }
 
-func (l *listener) queueSubscribe(subject string, queueGroupName string, handler nats.MsgHandler) error {
+func (l *listener) queueSubscribe(subject string, queueGroupName string, durableName string, handler nats.MsgHandler) error {
 	_, err := l.js.QueueSubscribe(
 		subject,
 		queueGroupName,
 		handler,
-		nats.Durable(queueGroupName),
+		nats.Durable(durableName),
 		nats.DeliverAll(),
 		nats.ManualAck(),
 		nats.AckWait(ackWait),
