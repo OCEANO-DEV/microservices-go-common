@@ -2,6 +2,7 @@ package nats
 
 type CustomerSubject string
 type OrderSubject string
+type StoreSubject string
 type UserSubject string
 
 const (
@@ -9,6 +10,10 @@ const (
 	OrderCreate     OrderSubject    = "order:create"
 	OrderPayment    OrderSubject    = "order:payment"
 	OrderStatus     OrderSubject    = "order:status"
+	StoreBook       StoreSubject    = "store:book"
+	StoreBooked     StoreSubject    = "store:booked"
+	StorePaid       StoreSubject    = "store:paid"
+	StorePayment    StoreSubject    = "store:payment"
 	UserDeleted     UserSubject     = "user:deleted"
 )
 
@@ -23,6 +28,15 @@ func GetOrderSubjects() []string {
 		string(OrderCreate),
 		string(OrderPayment),
 		string(OrderStatus),
+	}
+}
+
+func GetStoreSubjects() []string {
+	return []string{
+		string(StoreBook),
+		string(StoreBooked),
+		string(StorePaid),
+		string(StorePayment),
 	}
 }
 
