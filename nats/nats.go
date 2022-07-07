@@ -39,6 +39,14 @@ func NewJetStream(nc *nats.Conn, streamName string, subjects []string) (nats.Jet
 		if err != nil {
 			return nil, err
 		}
+	} else {
+		_, err = js.UpdateStream(&nats.StreamConfig{
+			Name:     streamName,
+			Subjects: subjects,
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
 	return js, nil
