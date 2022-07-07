@@ -15,11 +15,11 @@ type Publisher interface {
 }
 
 type publisher struct {
-	js nats.JetStream
+	js nats.JetStreamContext
 }
 
 func NewPublisher(
-	js nats.JetStream,
+	js nats.JetStreamContext,
 ) *publisher {
 	return &publisher{
 		js: js,
