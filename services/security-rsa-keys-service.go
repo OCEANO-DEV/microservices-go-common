@@ -2,6 +2,10 @@ package services
 
 import (
 	"context"
+	"crypto"
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/sha256"
 	"crypto/tls"
 	"encoding/json"
 	"io/ioutil"
@@ -17,6 +21,8 @@ import (
 
 type SecurityRSAKeysService interface {
 	GetAllRSAPublicKeys() ([]*models.RSAPublicKey, error)
+	Encrypt(msg string, publicKey *rsa.PublicKey) (string, error)
+	Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error)
 }
 
 type securityRSAKeysService struct {
@@ -47,6 +53,32 @@ func (s *securityRSAKeysService) GetAllRSAPublicKeys() ([]*models.RSAPublicKey, 
 	}
 
 	return modelsPublicKeys, nil
+}
+
+func (s *securityRSAKeysService) Encrypt(msg string, publicKey *rsa.PublicKey) (string, error) {
+	encryptedBytes, err := rsa.EncryptOAEP(
+		sha256.New(),
+		rand.Reader,
+		publicKey,
+		[]byte(msg),
+		nil)
+	if err != nil {
+		return "", err
+	}
+
+	return string(encryptedBytes), nil
+}
+
+func (s *securityRSAKeysService) Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {
+	decryptedBytes, err := privateKey.Decrypt(
+		nil,
+		encryptedBytes,
+		&rsa.OAEPOptions{Hash: crypto.SHA256})
+	if err != nil {
+		panic(err)
+	}
+
+	return string(decryptedBytes), nil
 }
 
 func (s *securityRSAKeysService) requestRSAPublicKey(ctx context.Context) ([]byte, error) {

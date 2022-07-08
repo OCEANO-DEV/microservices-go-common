@@ -1,10 +1,6 @@
 package helpers
 
 import (
-	"crypto"
-	"crypto/rand"
-	"crypto/rsa"
-	"crypto/sha256"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -142,30 +138,4 @@ func NextTime(dailyTime string) (time.Time, error) {
 	}
 
 	return date, nil
-}
-
-func Encrypt(msg string, publicKey *rsa.PublicKey) (string, error) {
-	encryptedBytes, err := rsa.EncryptOAEP(
-		sha256.New(),
-		rand.Reader,
-		publicKey,
-		[]byte(msg),
-		nil)
-	if err != nil {
-		return "", err
-	}
-
-	return string(encryptedBytes), nil
-}
-
-func Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {
-	decryptedBytes, err := privateKey.Decrypt(
-		nil,
-		encryptedBytes,
-		&rsa.OAEPOptions{Hash: crypto.SHA256})
-	if err != nil {
-		panic(err)
-	}
-
-	return string(decryptedBytes), nil
 }

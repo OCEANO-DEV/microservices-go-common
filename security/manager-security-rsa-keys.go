@@ -1,6 +1,7 @@
 package security
 
 import (
+	"crypto/rsa"
 	"fmt"
 	"time"
 
@@ -41,6 +42,14 @@ func (m *managerSecurityRSAKeys) GetAllRSAPublicKeys() []*models.RSAPublicKey {
 	}
 
 	return rsaPublicKeys
+}
+
+func (m *managerSecurityRSAKeys) Encrypt(msg string, publicKey *rsa.PublicKey) (string, error) {
+	return m.service.Encrypt(msg, publicKey)
+}
+
+func (m *managerSecurityRSAKeys) Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {
+	return m.service.Dencrypt(encryptedBytes, privateKey)
 }
 
 func (m *managerSecurityRSAKeys) refreshRSAPublicKeys() {
