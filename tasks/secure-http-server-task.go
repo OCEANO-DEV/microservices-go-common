@@ -14,20 +14,20 @@ import (
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
 )
 
-type VerifyCertificateWithHttpServerTask struct {
+type SecureHttpServerTask struct {
 	config              *config.Config
 	managerCertificates security.ManagerCertificates
 	emailService        services.EmailService
 	httputil            httputil.HttpServer
 }
 
-func NewVerifyCertificateWithHttpServerTask(
+func NewSecureHttpServerTask(
 	config *config.Config,
 	managerCertificates security.ManagerCertificates,
 	emailService services.EmailService,
 	httputil httputil.HttpServer,
-) *VerifyCertificateWithHttpServerTask {
-	return &VerifyCertificateWithHttpServerTask{
+) *SecureHttpServerTask {
+	return &SecureHttpServerTask{
 		config:              config,
 		managerCertificates: managerCertificates,
 		emailService:        emailService,
@@ -37,14 +37,14 @@ func NewVerifyCertificateWithHttpServerTask(
 
 var srv *http.Server
 
-func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.Context) {
+func (task *SecureHttpServerTask) Start(ctx context.Context) {
 	ticker := time.NewTicker(2500 * time.Millisecond)
 	quit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				_, span := trace.NewSpan(ctx, "VerifyCertificateTask.ReloadCertificate")
+				_, span := trace.NewSpan(ctx, "SecureHttpServerTask.Start")
 				defer span.End()
 
 				certIsValid := task.managerCertificates.VerifyCertificate()
@@ -61,7 +61,7 @@ func (task *VerifyCertificateWithHttpServerTask) ReloadCertificate(ctx context.C
 						break
 					}
 				}
-				fmt.Printf("certificate verified successfully: %s\n", time.Now().UTC())
+				fmt.Printf("start secure http server successfully: %s\n", time.Now().UTC())
 
 				if srv == nil {
 					if certIsValid {

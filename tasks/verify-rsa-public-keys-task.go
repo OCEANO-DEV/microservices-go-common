@@ -9,36 +9,36 @@ import (
 	"github.com/oceano-dev/microservices-go-common/security"
 )
 
-type VerifyPublicKeysTask struct {
+type VerifyRSAPublicKeysTask struct {
 	config  *config.Config
-	manager security.ManagerSecurityKeys
+	manager security.ManagerSecurityRSAKeys
 }
 
-func NewVerifyPublicKeysTask(
+func NewVerifyRSAPublicKeysTask(
 	config *config.Config,
-	manager security.ManagerSecurityKeys,
-) *VerifyPublicKeysTask {
-	return &VerifyPublicKeysTask{
+	manager security.ManagerSecurityRSAKeys,
+) *VerifyRSAPublicKeysTask {
+	return &VerifyRSAPublicKeysTask{
 		config:  config,
 		manager: manager,
 	}
 }
 
-func (task *VerifyPublicKeysTask) ReloadPublicKeys() {
+func (task *VerifyRSAPublicKeysTask) ReloadRSAPublicKeys() {
 	ticker := time.NewTicker(5 * time.Second)
 	quit := make(chan struct{})
 	go func() {
 		for {
 			select {
 			case <-ticker.C:
-				keys := task.manager.GetAllPublicKeys()
+				keys := task.manager.GetAllRSAPublicKeys()
 				if keys == nil {
-					log.Printf("public keys not success refreshed %s\n", time.Now().UTC())
+					log.Printf("rsa public keys not success refreshed %s\n", time.Now().UTC())
 					ticker.Reset(15 * time.Second)
 					break
 				}
 
-				fmt.Printf("public keys success refreshed %s\n", time.Now().UTC())
+				fmt.Printf("rsa public keys success refreshed %s\n", time.Now().UTC())
 				ticker.Reset(1 * time.Hour)
 			case <-quit:
 				ticker.Stop()
