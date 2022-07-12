@@ -6,6 +6,7 @@ import (
 )
 
 type RSAPublicKey struct {
-	Key       *rsa.PublicKey
-	ExpiresAt time.Time `json:"expires_at"`
+	Key       *rsa.PublicKey `json:"key"`
+	Kid       string         `json:"kid"`
+	ExpiresAt time.Time      `json:"expires_at"`
 }
