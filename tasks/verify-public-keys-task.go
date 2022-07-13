@@ -1,7 +1,6 @@
 package tasks
 
 import (
-	"fmt"
 	"log"
 	"time"
 
@@ -38,7 +37,7 @@ func (task *VerifyPublicKeysTask) ReloadPublicKeys() {
 					break
 				}
 
-				fmt.Printf("public keys success refreshed %s\n", time.Now().UTC())
+				//fmt.Printf("public keys success refreshed %s\n", time.Now().UTC())
 				ticker.Reset(1 * time.Hour)
 			case <-quit:
 				ticker.Stop()

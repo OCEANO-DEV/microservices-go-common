@@ -61,7 +61,7 @@ func (task *SecureHttpServerTask) Start(ctx context.Context) {
 						break
 					}
 				}
-				fmt.Printf("start secure http server successfully: %s\n", time.Now().UTC())
+				//fmt.Printf("start secure http server successfully: %s\n", time.Now().UTC())
 
 				if srv == nil {
 					if certIsValid {
