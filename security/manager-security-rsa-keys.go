@@ -44,7 +44,7 @@ func (m *managerSecurityRSAKeys) GetAllRSAPublicKeys() []*models.RSAPublicKey {
 	return rsaPublicKeys
 }
 
-func (m *managerSecurityRSAKeys) Encrypt(msg string, publicKey *rsa.PublicKey) (string, error) {
+func (m *managerSecurityRSAKeys) Encrypt(msg string, publicKey *rsa.PublicKey) ([]byte, error) {
 	return m.service.Encrypt(msg, publicKey)
 }
 

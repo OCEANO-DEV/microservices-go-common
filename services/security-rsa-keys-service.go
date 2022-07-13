@@ -21,7 +21,7 @@ import (
 
 type SecurityRSAKeysService interface {
 	GetAllRSAPublicKeys() ([]*models.RSAPublicKey, error)
-	Encrypt(msg string, publicKey *rsa.PublicKey) (string, error)
+	Encrypt(msg string, publicKey *rsa.PublicKey) ([]byte, error)
 	Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error)
 }
 
@@ -55,7 +55,7 @@ func (s *securityRSAKeysService) GetAllRSAPublicKeys() ([]*models.RSAPublicKey, 
 	return modelsPublicKeys, nil
 }
 
-func (s *securityRSAKeysService) Encrypt(msg string, publicKey *rsa.PublicKey) (string, error) {
+func (s *securityRSAKeysService) Encrypt(msg string, publicKey *rsa.PublicKey) ([]byte, error) {
 	encryptedBytes, err := rsa.EncryptOAEP(
 		sha256.New(),
 		rand.Reader,
@@ -63,10 +63,10 @@ func (s *securityRSAKeysService) Encrypt(msg string, publicKey *rsa.PublicKey) (
 		[]byte(msg),
 		nil)
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
-	return string(encryptedBytes), nil
+	return encryptedBytes, nil
 }
 
 func (s *securityRSAKeysService) Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {

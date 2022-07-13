@@ -9,6 +9,7 @@ type UserSubject string
 const (
 	CustomerDeleted CustomerSubject = "customer:deleted"
 	OrderCreate     OrderSubject    = "order:create"
+	OrderCreated    OrderSubject    = "order:created"
 	PaymentCreate   PaymentSubject  = "payment:create"
 	PaymentUpdate   PaymentSubject  = "payment:update"
 	OrderStatus     OrderSubject    = "order:status"
@@ -28,6 +29,7 @@ func GetCustomerSubjects() []string {
 func GetOrderSubjects() []string {
 	return []string{
 		string(OrderCreate),
+		string(OrderCreated),
 		string(OrderStatus),
 	}
 }

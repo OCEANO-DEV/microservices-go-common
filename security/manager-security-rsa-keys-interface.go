@@ -8,6 +8,6 @@ import (
 
 type ManagerSecurityRSAKeys interface {
 	GetAllRSAPublicKeys() []*models.RSAPublicKey
-	Encrypt(msg string, publicKey *rsa.PublicKey) (string, error)
+	Encrypt(msg string, publicKey *rsa.PublicKey) ([]byte, error)
 	Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error)
 }
