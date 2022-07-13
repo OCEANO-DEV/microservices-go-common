@@ -8,7 +8,8 @@ import (
 )
 
 const (
-	ackWait = 5 * time.Second
+	ackWait       = 60 * time.Second
+	maxAckPending = 25
 )
 
 type Listener interface {
@@ -53,10 +54,11 @@ func (l *listener) queueSubscribe(subject string, queueGroupName string, durable
 		subject,
 		queueGroupName,
 		handler,
-		nats.Durable(durableName),
-		nats.DeliverAll(),
 		nats.ManualAck(),
 		nats.AckWait(ackWait),
+		nats.Durable(durableName),
+		nats.MaxAckPending(maxAckPending),
+		nats.DeliverAll(),
 	)
 
 	return err
