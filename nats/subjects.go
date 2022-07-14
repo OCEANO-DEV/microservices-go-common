@@ -10,9 +10,10 @@ const (
 	CustomerDeleted CustomerSubject = "customer:deleted"
 	OrderCreate     OrderSubject    = "order:create"
 	OrderCreated    OrderSubject    = "order:created"
+	OrderStatus     OrderSubject    = "order:status"
+	PaymentCancel   PaymentSubject  = "payment:cancel"
 	PaymentCreate   PaymentSubject  = "payment:create"
 	PaymentUpdate   PaymentSubject  = "payment:update"
-	OrderStatus     OrderSubject    = "order:status"
 	StoreBook       StoreSubject    = "store:book"
 	StoreBooked     StoreSubject    = "store:booked"
 	StorePaid       StoreSubject    = "store:paid"
@@ -36,6 +37,7 @@ func GetOrderSubjects() []string {
 
 func GetPaymentSubjects() []string {
 	return []string{
+		string(PaymentCancel),
 		string(PaymentCreate),
 		string(PaymentUpdate),
 	}
