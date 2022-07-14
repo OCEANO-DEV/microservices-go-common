@@ -3,31 +3,31 @@ package models
 type Status uint
 
 const (
-	SentForPaymentConfirmation  Status = 0
-	AwaitingPaymentConfirmation Status = 1
-	PaymentConfirmed            Status = 2
-	PaymentRejected             Status = 3
-	PaymentCanceled             Status = 4
-	OrderCreated                Status = 5
-	OrderCanceled               Status = 6
+	AwaitingPaymentConfirmation Status = 0
+	OrderCanceled               Status = 1
+	OrderCreated                Status = 2
+	PaymentCanceled             Status = 3
+	PaymentConfirmed            Status = 4
+	PaymentRejected             Status = 5
+	SentForPaymentConfirmation  Status = 6
 )
 
 func (status Status) String() string {
 	switch status {
-	case SentForPaymentConfirmation:
-		return "Sent for payment confirmation"
 	case AwaitingPaymentConfirmation:
 		return "Awaiting payment confirmation"
+	case OrderCanceled:
+		return "Order canceled"
+	case OrderCreated:
+		return "Order created"
+	case PaymentCanceled:
+		return "Payment canceled"
 	case PaymentConfirmed:
 		return "Payment confirmed"
 	case PaymentRejected:
 		return "Payment rejected"
-	case PaymentCanceled:
-		return "Payment canceled"
-	case OrderCreated:
-		return "Order created"
-	case OrderCanceled:
-		return "Order canceled"
+	case SentForPaymentConfirmation:
+		return "Sent for payment confirmation"
 	}
 
 	return "unknown"
