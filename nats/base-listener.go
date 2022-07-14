@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	ackWait       = 60 * time.Second
+	ackWait       = 5 * time.Second
 	maxAckPending = 25
 )
 
