@@ -31,6 +31,7 @@ func (task *VerifyPublicKeysTask) ReloadPublicKeys() {
 			select {
 			case <-ticker.C:
 				keys := task.manager.GetAllPublicKeys()
+
 				if keys == nil {
 					log.Printf("public keys not success refreshed %s\n", time.Now().UTC())
 					ticker.Reset(15 * time.Second)

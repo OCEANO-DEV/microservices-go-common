@@ -31,6 +31,7 @@ func (task *VerifyRSAPublicKeysTask) ReloadRSAPublicKeys() {
 			select {
 			case <-ticker.C:
 				keys := task.manager.GetAllRSAPublicKeys()
+
 				if keys == nil {
 					log.Printf("rsa public keys not success refreshed %s\n", time.Now().UTC())
 					ticker.Reset(15 * time.Second)

@@ -3,6 +3,7 @@ package security
 import (
 	"crypto/rsa"
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -16,6 +17,7 @@ type managerSecurityRSAKeys struct {
 }
 
 var (
+	muxRSAKeys           sync.Mutex
 	rsaPublicKeys        []*models.RSAPublicKey
 	refreshRSAPublicKeys = time.Now().UTC()
 )
@@ -58,7 +60,10 @@ func (m *managerSecurityRSAKeys) refreshRSAPublicKeys() {
 		fmt.Println(err)
 	}
 
+	muxRSAKeys.Lock()
 	rsaPublicKeys = nil
 	rsaPublicKeys = append(rsaPublicKeys, newestRSAPublicKeys...)
+	muxRSAKeys.Unlock()
+
 	refreshRSAPublicKeys = time.Now().UTC().Add(time.Minute * time.Duration(m.config.SecurityRSAKeys.MinutesToRefreshRSAPublicKeys))
 }

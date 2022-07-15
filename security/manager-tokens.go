@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
-	"sync"
 
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/models"
@@ -65,10 +64,7 @@ func (m *ManagerTokens) ReadRefreshToken(c *gin.Context, tokenString string) (st
 }
 
 func (m *ManagerTokens) getKeyFunc() jwt.Keyfunc {
-	var mux sync.Mutex
-	mux.Lock()
 	keys := m.managerSecurityKeys.GetAllPublicKeys()
-	mux.Unlock()
 
 	var keyFunc jwt.Keyfunc = func(token *jwt.Token) (interface{}, error) {
 		keyID, ok := token.Header["kid"].(string)

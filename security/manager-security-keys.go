@@ -2,6 +2,7 @@ package security
 
 import (
 	"fmt"
+	"sync"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -15,6 +16,7 @@ type managerSecurityKeys struct {
 }
 
 var (
+	muxKeys           sync.Mutex
 	publicKeys        []*models.PublicKey
 	refreshPublicKeys = time.Now().UTC()
 )
@@ -49,7 +51,10 @@ func (m *managerSecurityKeys) refreshPublicKeys() {
 		fmt.Println(err)
 	}
 
+	muxKeys.Lock()
 	publicKeys = nil
 	publicKeys = append(publicKeys, newestPublicKeys...)
+	muxKeys.Unlock()
+
 	refreshPublicKeys = time.Now().UTC().Add(time.Minute * time.Duration(m.config.SecurityKeys.MinutesToRefreshPublicKeys))
 }
