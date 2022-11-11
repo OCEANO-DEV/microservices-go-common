@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -54,8 +55,10 @@ func (s *httpServer) RunTLSServer() (*http.Server, error) {
 
 func (s *httpServer) mountTLSServer() *http.Server {
 	return &http.Server{
-		Addr:    s.config.ListenPort,
-		Handler: s.router,
+		Addr:         s.config.ListenPort,
+		Handler:      s.router,
+		WriteTimeout: 15 * time.Second,
+		ReadTimeout:  15 * time.Second,
 		TLSConfig: &tls.Config{
 			MinVersion:               tls.VersionTLS12,
 			PreferServerCipherSuites: true,
