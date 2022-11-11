@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sync"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -35,6 +36,7 @@ func NewSecureHttpServerTask(
 	}
 }
 
+var muxHttpServer sync.Mutex
 var srv *http.Server
 
 func (task *SecureHttpServerTask) Start(ctx context.Context) {
@@ -71,7 +73,10 @@ func (task *SecureHttpServerTask) Start(ctx context.Context) {
 							break
 						}
 
+						muxHttpServer.Lock()
 						srv = srvNew
+						muxHttpServer.Unlock()
+
 						log.Printf("Listening on port %s", task.config.ListenPort)
 					}
 				}
