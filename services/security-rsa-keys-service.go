@@ -8,7 +8,7 @@ import (
 	"crypto/sha256"
 	"crypto/tls"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -22,7 +22,7 @@ import (
 type SecurityRSAKeysService interface {
 	GetAllRSAPublicKeys() ([]*models.RSAPublicKey, error)
 	Encrypt(msg string, publicKey *rsa.PublicKey) ([]byte, error)
-	Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error)
+	Decrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error)
 }
 
 type securityRSAKeysService struct {
@@ -69,7 +69,7 @@ func (s *securityRSAKeysService) Encrypt(msg string, publicKey *rsa.PublicKey) (
 	return encryptedBytes, nil
 }
 
-func (s *securityRSAKeysService) Dencrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {
+func (s *securityRSAKeysService) Decrypt(encryptedBytes []byte, privateKey *rsa.PrivateKey) (string, error) {
 	decryptedBytes, err := privateKey.Decrypt(
 		nil,
 		encryptedBytes,
@@ -127,7 +127,7 @@ func (s *securityRSAKeysService) requestRSAPublicKey(ctx context.Context) ([]byt
 	}
 	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Println("data parse:", err)
 		return nil, err

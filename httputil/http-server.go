@@ -70,7 +70,7 @@ func (s *httpServer) mountTLSServer() *http.Server {
 func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	certPath, keyPath := s.service.GetPathsCertificateAndKey()
 	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
-		return nil, errors.New("certficate not found")
+		return nil, errors.New("certificate not found")
 	}
 
 	cert, err := tls.LoadX509KeyPair(certPath, keyPath)

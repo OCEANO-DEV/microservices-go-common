@@ -5,7 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/tls"
 	"encoding/json"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"time"
@@ -97,7 +97,7 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 	}
 	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Println("data parse:", err)
 		return nil, err

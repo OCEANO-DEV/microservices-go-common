@@ -7,7 +7,7 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"os"
@@ -67,7 +67,7 @@ func (s *certificatesService) GetPathsCertificateAndKey() (string, string) {
 }
 
 func (s *certificatesService) ReadCertificate(pathCertificate string) (*x509.Certificate, error) {
-	data, err := ioutil.ReadFile(pathCertificate)
+	data, err := os.ReadFile(pathCertificate)
 	if err != nil {
 		os.Exit(1)
 		return nil, fmt.Errorf("read Certificate file error")
@@ -109,7 +109,7 @@ func (s *certificatesService) requestCertificate(ctx context.Context) ([]byte, e
 	}
 	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Println("data parse:", err)
 		return nil, err
@@ -141,7 +141,7 @@ func (s *certificatesService) requestCertificateKey(ctx context.Context) ([]byte
 	}
 	defer response.Body.Close()
 
-	data, err := ioutil.ReadAll(response.Body)
+	data, err := io.ReadAll(response.Body)
 	if err != nil {
 		log.Println("data parse:", err)
 		return nil, err

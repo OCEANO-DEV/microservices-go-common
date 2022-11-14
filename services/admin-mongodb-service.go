@@ -23,7 +23,7 @@ func NewAdminMongoDbService(
 	}
 }
 
-func (service *AdminMongoDbService) VerifiyMongoDBExporterUser() (bool, error) {
+func (service *AdminMongoDbService) VerifyMongoDBExporterUser() (bool, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 35*time.Second)
 	defer cancel()
 
