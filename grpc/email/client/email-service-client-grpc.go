@@ -2,6 +2,7 @@ package proto
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"time"
 
@@ -9,6 +10,7 @@ import (
 	"github.com/oceano-dev/microservices-go-common/config"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
 	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
 type EmailServiceClientGrpc struct {
@@ -32,7 +34,13 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) err
 	ctx, span := trace.NewSpan(ctx, "emailServiceGrpc.SendPasswordCodeReq")
 	defer span.End()
 
+	log.Println("verifyClientGrpc start")
+
 	s.verifyClientGrpc()
+
+	log.Println("verifyClientGrpc end")
+
+	fmt.Println(grpcClient)
 
 	req := &PasswordCodeReq{
 		Email: email,
@@ -50,6 +58,8 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) err
 	if err != nil {
 		return err
 	}
+
+	log.Println("email sent")
 
 	return nil
 }
@@ -89,7 +99,7 @@ func (s *EmailServiceClientGrpc) verifyClientGrpc() {
 }
 
 func (s *EmailServiceClientGrpc) createClientGrpc() {
-	conn, err := grpc.Dial(s.config.EmailService.Host, grpc.WithInsecure(), grpc.WithBlock())
+	conn, err := grpc.Dial(s.config.EmailService.Host, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("EmailServiceClientGrpc error connection: %v", err)
 	}
