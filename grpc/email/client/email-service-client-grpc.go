@@ -54,10 +54,12 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) err
 		return err
 	}
 
-	_, err := grpcClient.SendPasswordCode(ctx, req)
+	out, err := grpcClient.SendPasswordCode(ctx, req)
 	if err != nil {
 		return err
 	}
+
+	log.Printf("out: %v", out)
 
 	log.Println("email sent")
 
