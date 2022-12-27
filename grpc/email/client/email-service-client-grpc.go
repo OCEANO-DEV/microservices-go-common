@@ -2,7 +2,6 @@ package proto
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"time"
 
@@ -34,13 +33,7 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) err
 	ctx, span := trace.NewSpan(ctx, "emailServiceGrpc.SendPasswordCodeReq")
 	defer span.End()
 
-	log.Println("verifyClientGrpc start")
-
 	s.verifyClientGrpc()
-
-	log.Println("verifyClientGrpc end")
-
-	fmt.Println(grpcClient)
 
 	req := &PasswordCodeReq{
 		Email: email,
@@ -54,14 +47,12 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) err
 		return err
 	}
 
-	out, err := grpcClient.SendPasswordCode(ctx, req)
+	_, err := grpcClient.SendPasswordCode(ctx, req)
 	if err != nil {
 		return err
 	}
 
-	log.Printf("out: %v", out)
-
-	log.Println("email sent")
+	log.Print("email sent")
 
 	return nil
 }
