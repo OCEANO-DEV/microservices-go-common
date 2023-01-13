@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/models"
@@ -28,7 +29,7 @@ func NewManagerTokens(
 	}
 }
 
-func (m *ManagerTokens) ReadCookieAccessToken(c *gin.Context) (*models.TokenClaims, error) {
+func (m *ManagerTokens) ReadHeadAccessToken(c *gin.Context) (*models.TokenClaims, error) {
 
 	log.Println("==========================INICIO REQUEST ==============================")
 	log.Println(c.Request)
@@ -39,10 +40,17 @@ func (m *ManagerTokens) ReadCookieAccessToken(c *gin.Context) (*models.TokenClai
 	log.Println("==========================FIM HEADER ==============================")
 
 	var err error
-	tokenString, err := c.Cookie("accessToken")
-	if err != nil {
-		return nil, fmt.Errorf(err.Error())
+	tokenString := c.Request.Header.Get("Authorization")
+	if len(tokenString) == 0 {
+		return nil, fmt.Errorf("token not found")
 	}
+
+	bearer := strings.Split(tokenString, " ")
+	if bearer[0] != "Bearer" {
+		return nil, fmt.Errorf("token is not Bearer")
+	}
+
+	tokenString = bearer[1]
 
 	var keyFunc = m.getKeyFunc()
 	token, err := jwt.ParseWithClaims(tokenString, &models.TokenClaims{}, keyFunc)
@@ -57,6 +65,36 @@ func (m *ManagerTokens) ReadCookieAccessToken(c *gin.Context) (*models.TokenClai
 
 	return claims, nil
 }
+
+// func (m *ManagerTokens) ReadCookieAccessToken(c *gin.Context) (*models.TokenClaims, error) {
+
+// 	log.Println("==========================INICIO REQUEST ==============================")
+// 	log.Println(c.Request)
+// 	log.Println("==========================FIM REQUEST ==============================")
+// 	log.Println("")
+// 	log.Println("==========================INICIO HEADER ==============================")
+// 	log.Println(c.Request.Header)
+// 	log.Println("==========================FIM HEADER ==============================")
+
+// 	var err error
+// 	tokenString, err := c.Cookie("accessToken")
+// 	if err != nil {
+// 		return nil, fmt.Errorf(err.Error())
+// 	}
+
+// 	var keyFunc = m.getKeyFunc()
+// 	token, err := jwt.ParseWithClaims(tokenString, &models.TokenClaims{}, keyFunc)
+// 	if err != nil {
+// 		return nil, fmt.Errorf(err.Error())
+// 	}
+
+// 	claims, ok := token.Claims.(*models.TokenClaims)
+// 	if !ok || !token.Valid || claims.Iss != m.config.Token.Issuer {
+// 		return nil, errors.New("JWT failed validation")
+// 	}
+
+// 	return claims, nil
+// }
 
 func (m *ManagerTokens) ReadRefreshToken(c *gin.Context, tokenString string) (string, error) {
 	var keyFunc = m.getKeyFunc()

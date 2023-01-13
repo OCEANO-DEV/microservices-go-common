@@ -32,7 +32,7 @@ func NewAuthentication(
 
 func (auth *Authentication) Verify() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		claims, err := auth.managerTokens.ReadCookieAccessToken(c)
+		claims, err := auth.managerTokens.ReadHeadAccessToken(c)
 		if err != nil {
 			auth.logger.Error(err.Error())
 			httputil.NewResponseAbort(c, http.StatusUnauthorized, "token is not valid")
