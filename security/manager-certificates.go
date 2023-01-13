@@ -136,11 +136,11 @@ func (m *managerCertificates) requestCertificateKey() error {
 	}
 }
 
-func (m *managerCertificates) getCertificateKey() ([]byte, error) {
-	key, err := m.service.GetCertificateKey()
-	if err != nil {
-		return nil, err
-	}
+// func (m *managerCertificates) getCertificateKey() ([]byte, error) {
+// 	key, err := m.service.GetCertificateKey()
+// 	if err != nil {
+// 		return nil, err
+// 	}
 
-	return key, nil
-}
+// 	return key, nil
+// }
