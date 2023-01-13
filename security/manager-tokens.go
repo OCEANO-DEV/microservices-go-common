@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/models"
@@ -28,6 +29,9 @@ func NewManagerTokens(
 }
 
 func (m *ManagerTokens) ReadCookieAccessToken(c *gin.Context) (*models.TokenClaims, error) {
+
+	log.Println(c)
+
 	var err error
 	tokenString, err := c.Cookie("accessToken")
 	if err != nil {
