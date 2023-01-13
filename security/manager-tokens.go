@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"errors"
 	"fmt"
-	"log"
 	"strings"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -30,15 +29,6 @@ func NewManagerTokens(
 }
 
 func (m *ManagerTokens) ReadHeadAccessToken(c *gin.Context) (*models.TokenClaims, error) {
-
-	log.Println("==========================INICIO REQUEST ==============================")
-	log.Println(c.Request)
-	log.Println("==========================FIM REQUEST ==============================")
-	log.Println("")
-	log.Println("==========================INICIO HEADER ==============================")
-	log.Println(c.Request.Header)
-	log.Println("==========================FIM HEADER ==============================")
-
 	var err error
 	tokenString := c.Request.Header.Get("Authorization")
 	if len(tokenString) == 0 {
