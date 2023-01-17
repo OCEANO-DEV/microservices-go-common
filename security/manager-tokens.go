@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/models"
@@ -49,7 +50,8 @@ func (m *ManagerTokens) ReadHeadAccessToken(c *gin.Context) (*models.TokenClaims
 	}
 
 	claims, ok := token.Claims.(*models.TokenClaims)
-	if !ok || !token.Valid || claims.Iss != m.config.Token.Issuer {
+	expires := time.Now().UTC().After(time.Unix(claims.Exp, 0).UTC())
+	if !ok || !token.Valid || token.Header["typ"] != "access" || claims.Iss != m.config.Token.Issuer || expires {
 		return nil, errors.New("JWT failed validation")
 	}
 
@@ -94,7 +96,8 @@ func (m *ManagerTokens) ReadRefreshToken(c *gin.Context, tokenString string) (st
 	}
 
 	claims, ok := token.Claims.(*models.TokenClaims)
-	if !ok || !token.Valid || token.Header["typ"] != "refresh" || claims.Iss != m.config.Token.Issuer {
+	expires := time.Now().UTC().After(time.Unix(claims.Exp, 0).UTC())
+	if !ok || !token.Valid || token.Header["typ"] != "refresh" || claims.Iss != m.config.Token.Issuer || expires {
 		return "", errors.New("invalid token")
 	}
 
