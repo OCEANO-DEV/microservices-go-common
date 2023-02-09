@@ -12,9 +12,9 @@ func (id ID) String() string {
 }
 
 // StringToID converts a string to ID.
-func StringToID(s string) ID {
-	_id, _ := primitive.ObjectIDFromHex(s)
-	return ID(_id)
+func StringToID(s string) primitive.ObjectID {
+	id, _ := primitive.ObjectIDFromHex(s)
+	return id
 }
 
 // IsValidID checks if ID is valid.
@@ -23,6 +23,6 @@ func IsValidID(s string) bool {
 }
 
 // NewID create a new id
-func NewID() ID {
-	return ID(primitive.NewObjectID())
+func NewID() primitive.ObjectID {
+	return primitive.NewObjectID()
 }
