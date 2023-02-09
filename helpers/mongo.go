@@ -6,6 +6,11 @@ import (
 
 type ID primitive.ObjectID
 
+// String convert ID to string.
+func (id ID) String() string {
+	return primitive.ObjectID(id).Hex()
+}
+
 // StringToID converts a string to ID.
 func StringToID(s string) ID {
 	_id, _ := primitive.ObjectIDFromHex(s)
