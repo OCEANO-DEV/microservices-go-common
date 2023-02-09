@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"io/ioutil"
 	math "math/rand"
 	"os"
 	"reflect"
@@ -16,7 +15,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-//EnvVar function is for read .env file
+// EnvVar function is for read .env file
 func EnvVar(key string, defaultVal string) string {
 	godotenv.Load()
 	value := os.Getenv(key)
@@ -60,7 +59,7 @@ func MergeFilters(newFilter map[string]interface{}, filter interface{}) interfac
 }
 
 func ConvertImageToBase64(pathImage string) (string, error) {
-	data, err := ioutil.ReadFile(pathImage)
+	data, err := os.ReadFile(pathImage)
 	if err != nil {
 		return "", err
 	}
@@ -107,27 +106,27 @@ func NextTime(dailyTime string) (time.Time, error) {
 
 	hour, err := strconv.Atoi(timeParts[0])
 	if err != nil {
-		return time.Time{}, errors.New("Failed to decode time:")
+		return time.Time{}, errors.New("failed to decode time: ")
 	}
 
 	if len(timeParts) >= 2 {
 		minute, err = strconv.Atoi(timeParts[1])
 		if err != nil {
-			return time.Time{}, errors.New("Failed to decode time:")
+			return time.Time{}, errors.New("failed to decode time: ")
 		}
 	}
 
 	if len(timeParts) >= 3 {
 		second, err = strconv.Atoi(timeParts[2])
 		if err != nil {
-			return time.Time{}, errors.New("Failed to decode time:")
+			return time.Time{}, errors.New("failed to decode time: ")
 		}
 	}
 
 	if len(timeParts) == 4 {
 		nanosecond, err = strconv.Atoi(timeParts[3])
 		if err != nil {
-			return time.Time{}, errors.New("Failed to decode time:")
+			return time.Time{}, errors.New("failed to decode time: ")
 		}
 	}
 
