@@ -2,7 +2,6 @@ package middlewares
 
 import (
 	"net/http"
-	"sort"
 	"strings"
 
 	"github.com/oceano-dev/microservices-go-common/httputil"
@@ -15,7 +14,8 @@ func Authorization(claimName string, claimValue string) gin.HandlerFunc {
 		getClaims, permissionOk := c.Get("claims")
 		if permissionOk {
 			var claims = getClaims.([]interface{})
-			permissionOk = verifyClaimsPermission(claims, claimName, claimValue)
+			permissionOk = validateClaims(claims, claimName, claimValue)
+			// permissionOk = verifyClaimsPermission(claims, claimName, claimValue)
 		}
 
 		if !permissionOk {
@@ -31,30 +31,67 @@ func Authorization(claimName string, claimValue string) gin.HandlerFunc {
 	}
 }
 
-func verifyClaimsPermission(claims []interface{}, claimType string, claimValue string) bool {
-	sClaimType := strings.TrimSpace(claimType)
-	sClaimValue := strings.TrimSpace(claimValue)
-	if len(sClaimType) == 0 || len(sClaimValue) == 0 {
+func validateClaims(userClaims []interface{}, claimType string, claimValue string) bool {
+	_claimType := strings.TrimSpace(claimType)
+	_claimValue := strings.TrimSpace(claimValue)
+	if len(_claimType) == 0 || len(_claimValue) == 0 {
 		return false
 	}
-	for _, interator := range claims {
-		values := interator.(map[string]interface{})
-		if values["type"] == sClaimType && strings.Contains(values["value"].(string), sortClaimValue(sClaimValue)) {
-			return true
+
+	_claimValueSplitted := strings.Split(_claimValue, ",")
+
+	for _, interator := range userClaims {
+		result := interator.(map[string]interface{})
+		if result["type"] == _claimType {
+			userValueClaimSplitted := strings.Split(result["value"].(string), ",")
+
+			return arrayContainsArray(_claimValueSplitted, userValueClaimSplitted)
 		}
 	}
 
 	return false
 }
 
-func sortClaimValue(sClaimsValue string) string {
-	list := strings.Split(sClaimsValue, ",")
-
-	sort.Slice(list, func(i, j int) bool {
-		return list[i] < list[j]
-	})
-
-	claimsList := strings.Join(list, ",")
-
-	return claimsList
+func arrayContainsArray(array1 []string, array2 []string) bool {
+	for _, val1 := range array1 {
+		found := false
+		for _, val2 := range array2 {
+			if val1 == val2 {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return false
+		}
+	}
+	return true
 }
+
+// func verifyClaimsPermission(claims []interface{}, claimType string, claimValue string) bool {
+// 	sClaimType := strings.TrimSpace(claimType)
+// 	sClaimValue := strings.TrimSpace(claimValue)
+// 	if len(sClaimType) == 0 || len(sClaimValue) == 0 {
+// 		return false
+// 	}
+// 	for _, interator := range claims {
+// 		values := interator.(map[string]interface{})
+// 		if values["type"] == sClaimType && strings.Contains(values["value"].(string), sortClaimValue(sClaimValue)) {
+// 			return true
+// 		}
+// 	}
+
+// 	return false
+// }
+
+// func sortClaimValue(sClaimsValue string) string {
+// 	list := strings.Split(sClaimsValue, ",")
+
+// 	sort.Slice(list, func(i, j int) bool {
+// 		return list[i] < list[j]
+// 	})
+
+// 	claimsList := strings.Join(list, ",")
+
+// 	return claimsList
+// }
