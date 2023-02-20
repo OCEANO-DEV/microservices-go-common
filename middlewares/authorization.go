@@ -13,13 +13,13 @@ func Authorization(claimName string, claimValue string) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		getClaims, permissionOk := c.Get("claims")
 		if permissionOk {
-			var claims = getClaims.([]interface{})
+			claims := getClaims.([]interface{})
 			permissionOk = validateClaims(claims, claimName, claimValue)
 			// permissionOk = verifyClaimsPermission(claims, claimName, claimValue)
 		}
 
 		if !permissionOk {
-			httputil.NewResponseAbort(c, http.StatusUnauthorized, "you do not have permission")
+			httputil.NewResponseAbort(c, http.StatusForbidden, "you do not have permission")
 			// c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			// 	"status": http.StatusUnauthorized,
 			// 	"error":  []string{"you do not have permission"},
