@@ -18,7 +18,7 @@ import (
 )
 
 type SecurityKeysService interface {
-	GetAllPublicKeys() ([]*models.PublicKey, error)
+	GetAllPublicKeys() ([]*models.ECDSAPublicKey, error)
 }
 
 type securityKeysService struct {
@@ -33,8 +33,7 @@ func NewSecurityKeysService(
 	}
 }
 
-func (s *securityKeysService) GetAllPublicKeys() ([]*models.PublicKey, error) {
-
+func (s *securityKeysService) GetAllPublicKeys() ([]*models.ECDSAPublicKey, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
@@ -106,10 +105,10 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 	return data, nil
 }
 
-func (s *securityKeysService) getPublicKeysFromDataJWKS(data []byte) ([]*models.PublicKey, error) {
-	var modelsPublicKeys []*models.PublicKey
+func (s *securityKeysService) getPublicKeysFromDataJWKS(data []byte) ([]*models.ECDSAPublicKey, error) {
+	var modelsPublicKeys []*models.ECDSAPublicKey
 
-	publicKeyParams := make([]models.PublicKeysParams, 0)
+	publicKeyParams := make([]models.ECDSAPublicKeysParams, 0)
 	json.Unmarshal([]byte(data), &publicKeyParams)
 
 	for _, model := range publicKeyParams {
@@ -141,7 +140,7 @@ func (s *securityKeysService) getPublicKeysFromDataJWKS(data []byte) ([]*models.
 				return nil, err
 			}
 
-			modelPublicKey := &models.PublicKey{}
+			modelPublicKey := &models.ECDSAPublicKey{}
 			modelPublicKey.Key = publicKey
 			modelPublicKey.Kid = model.Kid
 			modelPublicKey.ExpiresAt = model.ExpiresAt

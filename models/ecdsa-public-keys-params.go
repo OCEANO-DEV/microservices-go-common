@@ -4,7 +4,7 @@ import (
 	"time"
 )
 
-type PublicKeysParams struct {
+type ECDSAPublicKeysParams struct {
 	Alg       string            `bson:"alg" json:"alg"`
 	Kid       string            `bson:"kid" json:"kid"`
 	Use       string            `bson:"use" json:"use"`

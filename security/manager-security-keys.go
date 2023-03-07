@@ -17,7 +17,7 @@ type managerSecurityKeys struct {
 
 var (
 	muxKeys           sync.Mutex
-	publicKeys        []*models.PublicKey
+	publicKeys        []*models.ECDSAPublicKey
 	refreshPublicKeys = time.Now().UTC()
 )
 
@@ -31,7 +31,7 @@ func NewManagerSecurityKeys(
 	}
 }
 
-func (m *managerSecurityKeys) GetAllPublicKeys() []*models.PublicKey {
+func (m *managerSecurityKeys) GetAllPublicKeys() []*models.ECDSAPublicKey {
 	if publicKeys == nil {
 		m.refreshPublicKeys()
 	}

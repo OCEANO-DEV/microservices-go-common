@@ -94,7 +94,7 @@ func (s *certificatesService) requestCertificate(ctx context.Context) ([]byte, e
 		},
 	}
 
-	hash := base64.StdEncoding.EncodeToString([]byte(s.config.Certificates.PasswordPermissionEndPoint))
+	hash := s.getHash()
 	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificate, hash)
 	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
 	if err != nil {
@@ -126,7 +126,7 @@ func (s *certificatesService) requestCertificateKey(ctx context.Context) ([]byte
 		},
 	}
 
-	hash := base64.StdEncoding.EncodeToString([]byte(s.config.Certificates.PasswordPermissionEndPoint))
+	hash := s.getHash()
 	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificateKey, hash)
 	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
 	if err != nil {
@@ -148,4 +148,8 @@ func (s *certificatesService) requestCertificateKey(ctx context.Context) ([]byte
 	}
 
 	return data, nil
+}
+
+func (s *certificatesService) getHash() string {
+	return base64.StdEncoding.EncodeToString([]byte(s.config.Certificates.PasswordPermissionEndPoint))
 }
