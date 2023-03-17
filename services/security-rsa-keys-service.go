@@ -97,7 +97,7 @@ func (s *securityRSAKeysService) requestRSAPublicKey(ctx context.Context) ([]byt
 	}
 
 	var response *http.Response
-	r := retrier.New(retrier.ConstantBackoff(6, 100*time.Millisecond), nil)
+	r := retrier.New(retrier.ConstantBackoff(6, 10*time.Millisecond), nil)
 	err = r.Run(func() error {
 		b := breaker.New(6, 1, 5*time.Second)
 		for {
