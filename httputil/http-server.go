@@ -2,15 +2,12 @@ package httputil
 
 import (
 	"crypto/tls"
-	"errors"
-	"fmt"
 	"log"
 	"net/http"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
-	"github.com/oceano-dev/microservices-go-common/helpers"
 	"github.com/oceano-dev/microservices-go-common/services"
 )
 
@@ -61,23 +58,31 @@ func (s *httpServer) mountTLSServer() *http.Server {
 		ReadTimeout:  15 * time.Second,
 		TLSConfig: &tls.Config{
 			MinVersion:               tls.VersionTLS12,
+			CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
 			PreferServerCipherSuites: true,
-			GetCertificate:           s.getLocalCertificate,
+			CipherSuites: []uint16{
+				tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+				tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+				tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+			},
+			GetCertificate: s.service.GetLocalCertificate,
 		},
+		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
 }
 
-func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
-	certPath, keyPath := s.service.GetPathsCertificateAndKey()
-	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
-		return nil, errors.New("certificate not found")
-	}
+// func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
+// 	certPath, keyPath := s.service.GetPathsCertificateAndKey()
+// 	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
+// 		return nil, errors.New("certificate not found")
+// 	}
 
-	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
-	if err != nil {
-		fmt.Println(err)
-		return nil, err
-	}
+// 	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+// 	if err != nil {
+// 		fmt.Println(err)
+// 		return nil, err
+// 	}
 
-	return &cert, nil
-}
+// 	return &cert, nil
+// }

@@ -6,6 +6,7 @@ import (
 	"crypto/x509"
 	"encoding/base64"
 	"encoding/pem"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -14,13 +15,17 @@ import (
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
+	"github.com/oceano-dev/microservices-go-common/helpers"
 )
 
 type CertificatesService interface {
-	GetCertificate() ([]byte, error)
-	GetCertificateKey() ([]byte, error)
-	GetPathsCertificateAndKey() (string, string)
+	GetCertificateCA() ([]byte, error)
+	GetCertificateHost() ([]byte, error)
+	GetCertificateHostKey() ([]byte, error)
+	GetPathCertificateCA() string
+	GetPathsCertificateHostAndKey() (string, string)
 	ReadCertificate(pathCertificate string) (*x509.Certificate, error)
+	GetLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error)
 }
 
 type certificatesService struct {
@@ -35,11 +40,11 @@ func NewCertificatesService(
 	}
 }
 
-func (s *certificatesService) GetCertificate() ([]byte, error) {
+func (s *certificatesService) GetCertificateCA() ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	data, err := s.requestCertificate(ctx)
+	data, err := s.requestCertificateCA(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -47,11 +52,11 @@ func (s *certificatesService) GetCertificate() ([]byte, error) {
 	return data, nil
 }
 
-func (s *certificatesService) GetCertificateKey() ([]byte, error) {
+func (s *certificatesService) GetCertificateHost() ([]byte, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	data, err := s.requestCertificateKey(ctx)
+	data, err := s.requestCertificateHost(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -59,11 +64,44 @@ func (s *certificatesService) GetCertificateKey() ([]byte, error) {
 	return data, nil
 }
 
-func (s *certificatesService) GetPathsCertificateAndKey() (string, string) {
+func (s *certificatesService) GetCertificateHostKey() ([]byte, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	data, err := s.requestCertificateHostKey(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (s *certificatesService) GetPathCertificateCA() string {
+	caCertPath := fmt.Sprintf("certs/ca_%s.crt", s.config.Certificates.FileName)
+
+	return caCertPath
+}
+
+func (s *certificatesService) GetPathsCertificateHostAndKey() (string, string) {
 	certPath := fmt.Sprintf("certs/%s.crt", s.config.Certificates.FileName)
 	keyPath := fmt.Sprintf("certs/%s.key", s.config.Certificates.FileName)
 
 	return certPath, keyPath
+}
+
+func (s *certificatesService) GetLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
+	certPath, keyPath := s.GetPathsCertificateHostAndKey()
+	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
+		return nil, errors.New("certificate host not found")
+	}
+
+	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	return &cert, nil
 }
 
 func (s *certificatesService) ReadCertificate(pathCertificate string) (*x509.Certificate, error) {
@@ -86,7 +124,7 @@ func (s *certificatesService) ReadCertificate(pathCertificate string) (*x509.Cer
 	return cert, nil
 }
 
-func (s *certificatesService) requestCertificate(ctx context.Context) ([]byte, error) {
+func (s *certificatesService) requestCertificateCA(ctx context.Context) ([]byte, error) {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
@@ -95,7 +133,7 @@ func (s *certificatesService) requestCertificate(ctx context.Context) ([]byte, e
 	}
 
 	hash := s.getHash()
-	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificate, hash)
+	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificateCA, hash)
 	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
 	if err != nil {
 		log.Println("request:", err)
@@ -118,7 +156,7 @@ func (s *certificatesService) requestCertificate(ctx context.Context) ([]byte, e
 	return data, nil
 }
 
-func (s *certificatesService) requestCertificateKey(ctx context.Context) ([]byte, error) {
+func (s *certificatesService) requestCertificateHost(ctx context.Context) ([]byte, error) {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
@@ -127,7 +165,39 @@ func (s *certificatesService) requestCertificateKey(ctx context.Context) ([]byte
 	}
 
 	hash := s.getHash()
-	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificateKey, hash)
+	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificateHost, hash)
+	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
+	if err != nil {
+		log.Println("request:", err)
+		return nil, err
+	}
+
+	response, err := client.Do(request)
+	if err != nil {
+		log.Println("response:", err)
+		return nil, err
+	}
+	defer response.Body.Close()
+
+	data, err := io.ReadAll(response.Body)
+	if err != nil {
+		log.Println("data parse:", err)
+		return nil, err
+	}
+
+	return data, nil
+}
+
+func (s *certificatesService) requestCertificateHostKey(ctx context.Context) ([]byte, error) {
+	client := http.Client{
+		Timeout: 5 * time.Second,
+		Transport: &http.Transport{
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+		},
+	}
+
+	hash := s.getHash()
+	endPoint := fmt.Sprintf("%s/%s", s.config.Certificates.EndPointGetCertificateHostKey, hash)
 	request, err := http.NewRequestWithContext(ctx, "GET", endPoint, nil)
 	if err != nil {
 		log.Println("request:", err)

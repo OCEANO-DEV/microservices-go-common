@@ -39,7 +39,7 @@ func (l *listener) Listener(subject string, queueGroupName string, durableName s
 				if err == nil {
 					<-quit
 				}
-				fmt.Println(fmt.Errorf("Subject: %v, QueueSubscribe: %v, Error: %v", subject, queueGroupName, err))
+				fmt.Println(fmt.Errorf("subject: %v, QueueSubscribe: %v, Error: %v", subject, queueGroupName, err))
 				ticker.Reset(2000 * time.Millisecond)
 			case <-quit:
 				ticker.Stop()

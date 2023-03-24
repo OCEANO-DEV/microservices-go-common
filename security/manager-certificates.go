@@ -25,7 +25,7 @@ func NewManagerCertificates(
 	config *config.Config,
 	service services.CertificatesService,
 ) *managerCertificates {
-	certPath, keyPath = service.GetPathsCertificateAndKey()
+	certPath, keyPath = service.GetPathsCertificateHostAndKey()
 	return &managerCertificates{
 		config:  config,
 		service: service,
@@ -58,6 +58,15 @@ func (m *managerCertificates) GetCertificate() error {
 	return nil
 }
 
+func (m *managerCertificates) GetCertificateCA() error {
+	err := m.requestCertificateCA()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (m *managerCertificates) refreshCertificate() error {
 	err := m.requestCertificate()
 	if err != nil {
@@ -78,7 +87,7 @@ func (m managerCertificates) requestCertificate() error {
 		var cert []byte
 		var err error
 		err = b.Run(func() error {
-			cert, err = m.service.GetCertificate()
+			cert, err = m.service.GetCertificateHost()
 			if err != nil {
 				return err
 			}
@@ -110,7 +119,7 @@ func (m *managerCertificates) requestCertificateKey() error {
 		var key []byte
 		var err error
 		err = b.Run(func() error {
-			key, err = m.service.GetCertificateKey()
+			key, err = m.service.GetCertificateHostKey()
 			if err != nil {
 				return err
 			}
@@ -125,6 +134,39 @@ func (m *managerCertificates) requestCertificateKey() error {
 			}
 
 			err := helpers.CreateFile(key, keyPath)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		case breaker.ErrBreakerOpen:
+			return err
+		}
+	}
+}
+
+func (m managerCertificates) requestCertificateCA() error {
+	b := breaker.New(3, 1, 5*time.Second)
+	for {
+		var caCert []byte
+		var err error
+		err = b.Run(func() error {
+			caCert, err = m.service.GetCertificateCA()
+			if err != nil {
+				return err
+			}
+
+			return nil
+		})
+
+		switch err {
+		case nil:
+			if caCert == nil {
+				return errors.New("certificate CA not found")
+			}
+
+			caCertPath := m.service.GetPathCertificateCA()
+			err := helpers.CreateFile(caCert, caCertPath)
 			if err != nil {
 				return err
 			}

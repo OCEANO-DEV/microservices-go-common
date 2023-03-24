@@ -1,14 +1,21 @@
 package nats
 
 import (
+	"crypto/tls"
 	"log"
 	"time"
 
 	"github.com/nats-io/nats.go"
 	"github.com/oceano-dev/microservices-go-common/config"
+	"github.com/oceano-dev/microservices-go-common/services"
 )
 
-func NewNats(config *config.Config) (*nats.Conn, error) {
+func NewNats(config *config.Config, service services.CertificatesService) (*nats.Conn, error) {
+	tls := &tls.Config{
+		MinVersion:         tls.VersionTLS12,
+		InsecureSkipVerify: true,
+		GetCertificate:     service.GetLocalCertificate,
+	}
 	nc, err := nats.Connect(
 		config.Nats.Url,
 		nats.Timeout(time.Second*time.Duration(config.Nats.ConnectWait)),
@@ -19,6 +26,7 @@ func NewNats(config *config.Config) (*nats.Conn, error) {
 		nats.DisconnectErrHandler(func(nc *nats.Conn, err error) {
 			log.Fatalf("Connection lost: %v", err)
 		}),
+		nats.Secure(tls),
 	)
 
 	return nc, err

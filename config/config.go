@@ -41,12 +41,13 @@ type MongoDBConfig struct {
 }
 
 type CertificatesConfig struct {
-	FileName                   string `json:"filename"`
-	HashPermissionEndPoint     string `json:"hashPermissionEndPoint"`
-	PasswordPermissionEndPoint string `json:"passwordPermissionEndPoint"`
-	EndPointGetCertificate     string `json:"endPointGetCertificate"`
-	EndPointGetCertificateKey  string `json:"endPointGetCertificateKey"`
-	MinutesToReloadCertificate int    `json:"minutesToReloadCertificate"`
+	FileName                      string `json:"filename"`
+	HashPermissionEndPoint        string `json:"hashPermissionEndPoint"`
+	PasswordPermissionEndPoint    string `json:"passwordPermissionEndPoint"`
+	EndPointGetCertificateCA      string `json:"endPointGetCertificateCA"`
+	EndPointGetCertificateHost    string `json:"endPointGetCertificateHost"`
+	EndPointGetCertificateHostKey string `json:"endPointGetCertificateHostKey"`
+	MinutesToReloadCertificate    int    `json:"minutesToReloadCertificate"`
 }
 
 type TokenConfig struct {
