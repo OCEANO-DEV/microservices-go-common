@@ -51,7 +51,7 @@ func (task *SecureHttpServerTask) Start(ctx context.Context) {
 
 				certIsValid := task.managerCertificates.VerifyCertificate()
 				if !certIsValid {
-					err := task.managerCertificates.GetCertificate()
+					err := task.managerCertificates.GetCertificateCA()
 					if err != nil {
 						msg := fmt.Sprintln("EmailService - certificate error: ", err)
 						err := task.emailService.SendSupportMessage(msg)

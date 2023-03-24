@@ -2,6 +2,7 @@ package nats
 
 import (
 	"crypto/tls"
+	"crypto/x509"
 	"log"
 	"time"
 
@@ -11,10 +12,19 @@ import (
 )
 
 func NewNats(config *config.Config, service services.CertificatesService) (*nats.Conn, error) {
+	caCertBytes, err := service.GetCertificateCA()
+	if err != nil {
+		return nil, err
+	}
+
+	pool := x509.NewCertPool()
+	pool.AppendCertsFromPEM(caCertBytes)
+
 	tls := &tls.Config{
-		MinVersion:         tls.VersionTLS12,
-		InsecureSkipVerify: true,
-		GetCertificate:     service.GetLocalCertificate,
+		MinVersion: tls.VersionTLS12,
+		// InsecureSkipVerify: true,
+		GetCertificate: service.GetLocalCertificate,
+		RootCAs:        pool,
 	}
 	nc, err := nats.Connect(
 		config.Nats.Url,
