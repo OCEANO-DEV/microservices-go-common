@@ -24,7 +24,8 @@ type CertificatesService interface {
 	GetCertificateHostKey() ([]byte, error)
 	GetPathCertificateCA() string
 	GetPathsCertificateHostAndKey() (string, string)
-	ReadCertificate(pathCertificate string) (*x509.Certificate, error)
+	ReadCertificate() (*x509.Certificate, error)
+	ReadCertificateCA() ([]byte, error)
 	GetLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error)
 }
 
@@ -104,8 +105,9 @@ func (s *certificatesService) GetLocalCertificate(info *tls.ClientHelloInfo) (*t
 	return &cert, nil
 }
 
-func (s *certificatesService) ReadCertificate(pathCertificate string) (*x509.Certificate, error) {
-	data, err := os.ReadFile(pathCertificate)
+func (s *certificatesService) ReadCertificate() (*x509.Certificate, error) {
+	certPath, _ := s.GetPathsCertificateHostAndKey()
+	data, err := os.ReadFile(certPath)
 	if err != nil {
 		os.Exit(1)
 		return nil, fmt.Errorf("read Certificate file error")
@@ -122,6 +124,21 @@ func (s *certificatesService) ReadCertificate(pathCertificate string) (*x509.Cer
 	}
 
 	return cert, nil
+}
+
+func (s *certificatesService) ReadCertificateCA() ([]byte, error) {
+	data, err := os.ReadFile(s.GetPathCertificateCA())
+	if err != nil {
+		os.Exit(1)
+		return nil, fmt.Errorf("read Certificate CA file error")
+	}
+
+	pemBlock, _ := pem.Decode(data)
+	if pemBlock == nil {
+		return nil, fmt.Errorf("decode Certificate CA error")
+	}
+
+	return pemBlock.Bytes, nil
 }
 
 func (s *certificatesService) requestCertificateCA(ctx context.Context) ([]byte, error) {

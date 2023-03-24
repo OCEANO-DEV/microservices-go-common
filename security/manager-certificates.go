@@ -17,8 +17,9 @@ type managerCertificates struct {
 }
 
 var (
-	certPath string
-	keyPath  string
+	certPath   string
+	keyPath    string
+	caCertPath string
 )
 
 func NewManagerCertificates(
@@ -26,6 +27,7 @@ func NewManagerCertificates(
 	service services.CertificatesService,
 ) *managerCertificates {
 	certPath, keyPath = service.GetPathsCertificateHostAndKey()
+	caCertPath = service.GetPathCertificateCA()
 	return &managerCertificates{
 		config:  config,
 		service: service,
@@ -34,7 +36,7 @@ func NewManagerCertificates(
 
 func (m *managerCertificates) VerifyCertificate() bool {
 	if helpers.FileExists(certPath) && helpers.FileExists(keyPath) {
-		cert, err := m.service.ReadCertificate(certPath)
+		cert, err := m.service.ReadCertificate()
 		if err != nil {
 			return false
 		}
@@ -44,6 +46,15 @@ func (m *managerCertificates) VerifyCertificate() bool {
 		}
 
 		return true
+	}
+
+	return false
+}
+
+func (m *managerCertificates) VerifyCertificateCA() bool {
+	if helpers.FileExists(caCertPath) {
+		_, err := m.service.ReadCertificateCA()
+		return err == nil
 	}
 
 	return false
@@ -59,7 +70,7 @@ func (m *managerCertificates) GetCertificate() error {
 }
 
 func (m *managerCertificates) GetCertificateCA() error {
-	err := m.requestCertificateCA()
+	err := m.refreshCertificateCA()
 	if err != nil {
 		return err
 	}
@@ -74,6 +85,15 @@ func (m *managerCertificates) refreshCertificate() error {
 	}
 
 	err = m.requestCertificateKey()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (m *managerCertificates) refreshCertificateCA() error {
+	err := m.requestCertificateCA()
 	if err != nil {
 		return err
 	}
@@ -148,10 +168,10 @@ func (m *managerCertificates) requestCertificateKey() error {
 func (m managerCertificates) requestCertificateCA() error {
 	b := breaker.New(3, 1, 5*time.Second)
 	for {
-		var caCert []byte
+		var cert []byte
 		var err error
 		err = b.Run(func() error {
-			caCert, err = m.service.GetCertificateCA()
+			cert, err = m.service.GetCertificateCA()
 			if err != nil {
 				return err
 			}
@@ -161,12 +181,11 @@ func (m managerCertificates) requestCertificateCA() error {
 
 		switch err {
 		case nil:
-			if caCert == nil {
+			if cert == nil {
 				return errors.New("certificate CA not found")
 			}
 
-			caCertPath := m.service.GetPathCertificateCA()
-			err := helpers.CreateFile(caCert, caCertPath)
+			err := helpers.CreateFile(cert, certPath)
 			if err != nil {
 				return err
 			}

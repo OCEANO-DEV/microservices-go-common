@@ -12,7 +12,7 @@ import (
 )
 
 func NewNats(config *config.Config, service services.CertificatesService) (*nats.Conn, error) {
-	caCertBytes, err := service.GetCertificateCA()
+	caCertBytes, err := service.ReadCertificateCA()
 	if err != nil {
 		return nil, err
 	}
