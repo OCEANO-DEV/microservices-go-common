@@ -34,7 +34,7 @@ func NewManagerCertificates(
 	}
 }
 
-func (m *managerCertificates) VerifyCertificate() bool {
+func (m *managerCertificates) VerifyCertificates() bool {
 	if helpers.FileExists(caCertPath) && helpers.FileExists(certPath) && helpers.FileExists(keyPath) {
 		caCert, err := m.service.ReadCertificateCA()
 		if caCert == nil || err != nil {

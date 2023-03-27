@@ -49,7 +49,7 @@ func (task *SecureHttpServerTask) Start(ctx context.Context) {
 				_, span := trace.NewSpan(ctx, "SecureHttpServerTask.Start")
 				defer span.End()
 
-				certIsValid := task.managerCertificates.VerifyCertificate()
+				certIsValid := task.managerCertificates.VerifyCertificates()
 				if !certIsValid {
 					err := task.managerCertificates.GetCertificate()
 					if err != nil {
