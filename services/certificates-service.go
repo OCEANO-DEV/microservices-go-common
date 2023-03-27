@@ -24,8 +24,9 @@ type CertificatesService interface {
 	GetCertificateHostKey() ([]byte, error)
 	GetPathCertificateCA() string
 	GetPathsCertificateHostAndKey() (string, string)
-	ReadCertificate() (*x509.Certificate, error)
 	ReadCertificateCA() ([]byte, error)
+	ReadCertificate() (*x509.Certificate, error)
+	GetLocalCertificateCA() *x509.CertPool
 	GetLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error)
 }
 
@@ -90,6 +91,18 @@ func (s *certificatesService) GetPathsCertificateHostAndKey() (string, string) {
 	return certPath, keyPath
 }
 
+func (s *certificatesService) GetLocalCertificateCA() *x509.CertPool {
+	caCertBytes, err := s.ReadCertificateCA()
+	if err != nil {
+		return nil
+	}
+
+	pool := x509.NewCertPool()
+	pool.AppendCertsFromPEM(caCertBytes)
+
+	return pool
+}
+
 func (s *certificatesService) GetLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
 	certPath, keyPath := s.GetPathsCertificateHostAndKey()
 	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
@@ -103,6 +116,21 @@ func (s *certificatesService) GetLocalCertificate(info *tls.ClientHelloInfo) (*t
 	}
 
 	return &cert, nil
+}
+
+func (s *certificatesService) ReadCertificateCA() ([]byte, error) {
+	data, err := os.ReadFile(s.GetPathCertificateCA())
+	if err != nil {
+		os.Exit(1)
+		return nil, fmt.Errorf("read Certificate CA file error")
+	}
+
+	pemBlock, _ := pem.Decode(data)
+	if pemBlock == nil {
+		return nil, fmt.Errorf("decode Certificate CA error")
+	}
+
+	return pemBlock.Bytes, nil
 }
 
 func (s *certificatesService) ReadCertificate() (*x509.Certificate, error) {
@@ -124,21 +152,6 @@ func (s *certificatesService) ReadCertificate() (*x509.Certificate, error) {
 	}
 
 	return cert, nil
-}
-
-func (s *certificatesService) ReadCertificateCA() ([]byte, error) {
-	data, err := os.ReadFile(s.GetPathCertificateCA())
-	if err != nil {
-		os.Exit(1)
-		return nil, fmt.Errorf("read Certificate CA file error")
-	}
-
-	pemBlock, _ := pem.Decode(data)
-	if pemBlock == nil {
-		return nil, fmt.Errorf("decode Certificate CA error")
-	}
-
-	return pemBlock.Bytes, nil
 }
 
 func (s *certificatesService) requestCertificateCA(ctx context.Context) ([]byte, error) {
