@@ -12,10 +12,10 @@ import (
 
 func NewNats(config *config.Config, service services.CertificatesService) (*nats.Conn, error) {
 	tls := &tls.Config{
-		MinVersion:         tls.VersionTLS12,
-		InsecureSkipVerify: true,
-		GetCertificate:     service.GetLocalCertificate,
-		RootCAs:            service.GetLocalCertificateCA(),
+		MinVersion: tls.VersionTLS12,
+		// InsecureSkipVerify: true,
+		GetCertificate: service.GetLocalCertificate,
+		RootCAs:        service.GetLocalCertificateCA(),
 	}
 	nc, err := nats.Connect(
 		config.Nats.Url,
