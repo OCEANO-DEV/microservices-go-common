@@ -57,7 +57,7 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.Production,
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: true,
 				GetCertificate: s.service.GetLocalCertificate,
 				RootCAs:        s.service.GetLocalCertificateCA()},
 		},

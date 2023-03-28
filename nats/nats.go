@@ -21,7 +21,7 @@ func NewNats(config *config.Config, service services.CertificatesService) (*nats
 			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 		},
-		InsecureSkipVerify: !config.Production,
+		InsecureSkipVerify: true,
 		GetCertificate:     service.GetLocalCertificate,
 		RootCAs:            service.GetLocalCertificateCA(),
 	}
