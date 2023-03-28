@@ -22,7 +22,7 @@ type CertificatesService interface {
 	GetCertificateCA() ([]byte, error)
 	GetCertificateHost() ([]byte, error)
 	GetCertificateHostKey() ([]byte, error)
-	GetPathCertificateCAAndKey() (string, string)
+	GetPathsCertificateCAAndKey() (string, string)
 	GetPathsCertificateHostAndKey() (string, string)
 	ReadCertificateCA() ([]byte, error)
 	ReadCertificate() (*x509.Certificate, error)
@@ -78,7 +78,7 @@ func (s *certificatesService) GetCertificateHostKey() ([]byte, error) {
 	return data, nil
 }
 
-func (s *certificatesService) GetPathCertificateCAAndKey() (string, string) {
+func (s *certificatesService) GetPathsCertificateCAAndKey() (string, string) {
 	caCertPath := fmt.Sprintf("%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
 	caKeyPath := fmt.Sprintf("%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
 
@@ -93,7 +93,7 @@ func (s *certificatesService) GetPathsCertificateHostAndKey() (string, string) {
 }
 
 func (s *certificatesService) GetLocalCertificateCA() *x509.CertPool {
-	caCertPath, _ := s.GetPathCertificateCAAndKey()
+	caCertPath, _ := s.GetPathsCertificateCAAndKey()
 	if !helpers.FileExists(caCertPath) {
 		fmt.Println("certificate CA not found")
 		return nil
