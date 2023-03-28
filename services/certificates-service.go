@@ -92,6 +92,12 @@ func (s *certificatesService) GetPathsCertificateHostAndKey() (string, string) {
 }
 
 func (s *certificatesService) GetLocalCertificateCA() *x509.CertPool {
+	caCertPath := s.GetPathCertificateCA()
+	if !helpers.FileExists(caCertPath) {
+		fmt.Println("certificate CA not found")
+		return nil
+	}
+
 	caCertBytes, err := s.ReadCertificateCA()
 	if err != nil {
 		return nil

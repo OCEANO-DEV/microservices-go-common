@@ -26,14 +26,17 @@ type SecurityRSAKeysService interface {
 }
 
 type securityRSAKeysService struct {
-	config *config.Config
+	config  *config.Config
+	service CertificatesService
 }
 
 func NewSecurityRSAKeysService(
 	config *config.Config,
+	service CertificatesService,
 ) *securityRSAKeysService {
 	return &securityRSAKeysService{
-		config: config,
+		config:  config,
+		service: service,
 	}
 }
 
@@ -85,7 +88,9 @@ func (s *securityRSAKeysService) requestRSAPublicKey(ctx context.Context) ([]byt
 	client := http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.Production,
+				GetCertificate: s.service.GetLocalCertificate,
+				RootCAs:        s.service.GetLocalCertificateCA()},
 		},
 	}
 

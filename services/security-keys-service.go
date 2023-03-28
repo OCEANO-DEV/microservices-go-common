@@ -22,14 +22,17 @@ type SecurityKeysService interface {
 }
 
 type securityKeysService struct {
-	config *config.Config
+	config  *config.Config
+	service CertificatesService
 }
 
 func NewSecurityKeysService(
 	config *config.Config,
+	service CertificatesService,
 ) *securityKeysService {
 	return &securityKeysService{
-		config: config,
+		config:  config,
+		service: service,
 	}
 }
 
@@ -54,7 +57,9 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 	client := http.Client{
 		Timeout: 5 * time.Second,
 		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+			TLSClientConfig: &tls.Config{InsecureSkipVerify: !s.config.Production,
+				GetCertificate: s.service.GetLocalCertificate,
+				RootCAs:        s.service.GetLocalCertificateCA()},
 		},
 	}
 

@@ -2,6 +2,7 @@ package security
 
 import (
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -17,9 +18,10 @@ type managerCertificates struct {
 }
 
 var (
-	caCertPath string
-	certPath   string
-	keyPath    string
+	caCertPath  string
+	certPath    string
+	keyPath     string
+	CACertError = "Certificate not found! the service is running in production mode, it is necessary to generate a certificate from a certification authority"
 )
 
 func NewManagerCertificates(
@@ -57,6 +59,10 @@ func (m *managerCertificates) VerifyCertificates() bool {
 }
 
 func (m *managerCertificates) GetCertificateCA() error {
+	if m.config.Production {
+		return fmt.Errorf(CACertError)
+	}
+
 	err := m.refreshCertificateCA()
 	if err != nil {
 		return err
@@ -66,6 +72,10 @@ func (m *managerCertificates) GetCertificateCA() error {
 }
 
 func (m *managerCertificates) GetCertificate() error {
+	if m.config.Production {
+		return fmt.Errorf(CACertError)
+	}
+
 	err := m.refreshCertificate()
 	if err != nil {
 		return err
