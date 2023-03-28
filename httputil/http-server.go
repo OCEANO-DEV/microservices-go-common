@@ -45,6 +45,8 @@ func (s *httpServer) RunTLSServer() (*http.Server, error) {
 				log.Fatalf("err: %s\n", err)
 			}
 		}()
+
+		log.Printf("Listening on port %s", s.config.ListenPort)
 	}
 
 	return srv, err
