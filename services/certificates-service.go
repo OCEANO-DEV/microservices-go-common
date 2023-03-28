@@ -79,15 +79,15 @@ func (s *certificatesService) GetCertificateHostKey() ([]byte, error) {
 }
 
 func (s *certificatesService) GetPathsCertificateCAAndKey() (string, string) {
-	caCertPath := fmt.Sprintf("%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
-	caKeyPath := fmt.Sprintf("%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
+	caCertPath := fmt.Sprintf("/%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
+	caKeyPath := fmt.Sprintf("/%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
 
 	return caCertPath, caKeyPath
 }
 
 func (s *certificatesService) GetPathsCertificateHostAndKey() (string, string) {
-	certPath := fmt.Sprintf("%s/%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
-	keyPath := fmt.Sprintf("%s/%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
+	certPath := fmt.Sprintf("/%s/%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
+	keyPath := fmt.Sprintf("/%s/%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
 
 	return certPath, keyPath
 }
