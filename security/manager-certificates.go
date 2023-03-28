@@ -28,7 +28,7 @@ func NewManagerCertificates(
 	config *config.Config,
 	service services.CertificatesService,
 ) *managerCertificates {
-	caCertPath = service.GetPathCertificateCA()
+	caCertPath, _ = service.GetPathCertificateCAAndKey()
 	certPath, keyPath = service.GetPathsCertificateHostAndKey()
 	return &managerCertificates{
 		config:  config,

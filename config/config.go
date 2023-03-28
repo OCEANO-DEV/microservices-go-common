@@ -41,7 +41,9 @@ type MongoDBConfig struct {
 }
 
 type CertificatesConfig struct {
-	FileName                      string `json:"filename"`
+	FolderName                    string `json:"foldername"`
+	FileNameCert                  string `json:"filenamecert"`
+	FileNameKey                   string `json:"filenamekey"`
 	HashPermissionEndPoint        string `json:"hashPermissionEndPoint"`
 	PasswordPermissionEndPoint    string `json:"passwordPermissionEndPoint"`
 	EndPointGetCertificateCA      string `json:"endPointGetCertificateCA"`

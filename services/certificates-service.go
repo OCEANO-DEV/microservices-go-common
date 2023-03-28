@@ -22,7 +22,7 @@ type CertificatesService interface {
 	GetCertificateCA() ([]byte, error)
 	GetCertificateHost() ([]byte, error)
 	GetCertificateHostKey() ([]byte, error)
-	GetPathCertificateCA() string
+	GetPathCertificateCAAndKey() (string, string)
 	GetPathsCertificateHostAndKey() (string, string)
 	ReadCertificateCA() ([]byte, error)
 	ReadCertificate() (*x509.Certificate, error)
@@ -78,21 +78,22 @@ func (s *certificatesService) GetCertificateHostKey() ([]byte, error) {
 	return data, nil
 }
 
-func (s *certificatesService) GetPathCertificateCA() string {
-	caCertPath := fmt.Sprintf("certs/ca_%s.crt", s.config.Certificates.FileName)
+func (s *certificatesService) GetPathCertificateCAAndKey() (string, string) {
+	caCertPath := fmt.Sprintf("%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
+	caKeyPath := fmt.Sprintf("%s/ca_%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
 
-	return caCertPath
+	return caCertPath, caKeyPath
 }
 
 func (s *certificatesService) GetPathsCertificateHostAndKey() (string, string) {
-	certPath := fmt.Sprintf("certs/%s.crt", s.config.Certificates.FileName)
-	keyPath := fmt.Sprintf("certs/%s.key", s.config.Certificates.FileName)
+	certPath := fmt.Sprintf("%s/%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameCert)
+	keyPath := fmt.Sprintf("%s/%s", s.config.Certificates.FolderName, s.config.Certificates.FileNameKey)
 
 	return certPath, keyPath
 }
 
 func (s *certificatesService) GetLocalCertificateCA() *x509.CertPool {
-	caCertPath := s.GetPathCertificateCA()
+	caCertPath, _ := s.GetPathCertificateCAAndKey()
 	if !helpers.FileExists(caCertPath) {
 		fmt.Println("certificate CA not found")
 		return nil
@@ -125,7 +126,8 @@ func (s *certificatesService) GetLocalCertificate(info *tls.ClientHelloInfo) (*t
 }
 
 func (s *certificatesService) ReadCertificateCA() ([]byte, error) {
-	data, err := os.ReadFile(s.GetPathCertificateCA())
+	caCertPath, _ := s.GetPathsCertificateHostAndKey()
+	data, err := os.ReadFile(caCertPath)
 	if err != nil {
 		os.Exit(1)
 		return nil, fmt.Errorf("read Certificate CA file error")
