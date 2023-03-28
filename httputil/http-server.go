@@ -66,10 +66,8 @@ func (s *httpServer) mountTLSServer() *http.Server {
 				tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
 				tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 			},
-			// GetCertificate: s.service.GetLocalCertificate,
-			// RootCAs:        s.service.GetLocalCertificateCA(),
-			ClientCAs:  s.service.GetLocalCertificateCA(),
-			ClientAuth: tls.RequireAndVerifyClientCert,
+			GetCertificate: s.service.GetLocalCertificate,
+			ClientCAs:      s.service.GetLocalCertificateCA(),
 		},
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
