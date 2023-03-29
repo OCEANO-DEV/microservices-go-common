@@ -34,6 +34,7 @@ func (s *GrpcServer) CreateGrpcServer() (*grpc.Server, error) {
 			MaxConnectionAge:  time.Duration(s.config.GrpcServer.MaxConnectionAge) * time.Minute,
 			Time:              time.Duration(s.config.GrpcServer.Timeout) * time.Minute,
 		}),
+		grpc.StreamInterceptor(grpc_prometheus.StreamServerInterceptor),
 		grpc.UnaryInterceptor(grpc_middleware.ChainUnaryServer(
 			grpc_ctxtags.UnaryServerInterceptor(),
 			grpc_otel.UnaryServerInterceptor(),
