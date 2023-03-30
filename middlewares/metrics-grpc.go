@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"context"
-	"fmt"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -14,13 +14,14 @@ import (
 
 func MetricsGRPC(service services.Metrics) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (resp interface{}, err error) {
-		fmt.Println(req)
+
+		status := http.StatusOK
 
 		resp, err = handler(ctx, req)
-		var status = http.StatusOK
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 		}
+
 		appMetric := metrics.NewHttpMetrics(info.FullMethod, "POST")
 		appMetric.Started()
 		appMetric.Finished()
