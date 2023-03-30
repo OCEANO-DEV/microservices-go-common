@@ -8,7 +8,6 @@ import (
 
 	"github.com/oceano-dev/microservices-go-common/metrics"
 	"github.com/oceano-dev/microservices-go-common/services"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"google.golang.org/grpc"
 )
 
@@ -29,13 +28,5 @@ func MetricsGRPC(service services.Metrics) grpc.UnaryServerInterceptor {
 		service.SaveHttp(appMetric)
 
 		return resp, err
-	}
-}
-
-func MetricsGRPCHandler() http.HandlerFunc {
-	handler := promhttp.Handler()
-
-	return func(response http.ResponseWriter, request *http.Request) {
-		handler.ServeHTTP(response, request)
 	}
 }
