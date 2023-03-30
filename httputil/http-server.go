@@ -74,18 +74,3 @@ func (s *httpServer) mountTLSServer() *http.Server {
 		TLSNextProto: make(map[string]func(*http.Server, *tls.Conn, http.Handler), 0),
 	}
 }
-
-// func (s *httpServer) getLocalCertificate(info *tls.ClientHelloInfo) (*tls.Certificate, error) {
-// 	certPath, keyPath := s.service.GetPathsCertificateAndKey()
-// 	if !helpers.FileExists(certPath) || !helpers.FileExists(keyPath) {
-// 		return nil, errors.New("certificate not found")
-// 	}
-
-// 	cert, err := tls.LoadX509KeyPair(certPath, keyPath)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil, err
-// 	}
-
-// 	return &cert, nil
-// }
