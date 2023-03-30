@@ -10,19 +10,24 @@ import (
 	grpc_otel "go.opentelemetry.io/contrib/instrumentation/google.golang.org/grpc/otelgrpc"
 
 	"github.com/oceano-dev/microservices-go-common/config"
+	"github.com/oceano-dev/microservices-go-common/middlewares"
+	"github.com/oceano-dev/microservices-go-common/services"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
 )
 
 type GrpcServer struct {
-	config *config.Config
+	config         *config.Config
+	serviceMetrics services.Metrics
 }
 
 func NewGrpcServer(
 	config *config.Config,
+	serviceMetrics services.Metrics,
 ) *GrpcServer {
 	return &GrpcServer{
-		config: config,
+		config:         config,
+		serviceMetrics: serviceMetrics,
 	}
 }
 
@@ -40,7 +45,7 @@ func (s *GrpcServer) CreateGrpcServer() (*grpc.Server, error) {
 			grpc_otel.UnaryServerInterceptor(),
 			grpc_prometheus.UnaryServerInterceptor,
 			grpcrecovery.UnaryServerInterceptor(),
-		),
+			middlewares.MetricsGRPC(s.serviceMetrics)),
 		),
 	)
 
