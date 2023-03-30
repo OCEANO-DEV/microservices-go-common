@@ -21,7 +21,7 @@ func MetricsGRPC(service services.Metrics) grpc.UnaryServerInterceptor {
 		if err != nil {
 			fmt.Println(err)
 		}
-		appMetric := metrics.NewHttpMetrics("req.URL.Path", "req.Method")
+		appMetric := metrics.NewHttpMetrics(info.FullMethod, "POST")
 		appMetric.Started()
 		appMetric.Finished()
 		appMetric.StatusCode = strconv.Itoa(status)
