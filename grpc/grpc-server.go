@@ -77,6 +77,7 @@ func (s *GrpcServer) credentials() credentials.TransportCredentials {
 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 		},
 		GetCertificate: s.service.GetLocalCertificate,
+		ClientAuth:     tls.RequireAndVerifyClientCert,
 		ClientCAs:      s.service.GetLocalCertificateCA(),
 	}
 
