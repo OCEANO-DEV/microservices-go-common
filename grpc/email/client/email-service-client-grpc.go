@@ -97,7 +97,14 @@ func (s *EmailServiceClientGrpc) verifyClientGrpc() {
 }
 
 func (s *EmailServiceClientGrpc) createClientGrpc() {
-	conn, err := grpc.Dial(s.config.EmailService.Host, grpc.WithTransportCredentials(s.credentials()), grpc.WithBlock())
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
+	defer cancel()
+
+	conn, err := grpc.DialContext(
+		ctx,
+		s.config.EmailService.Host,
+		grpc.WithTransportCredentials(s.credentials()),
+		grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("EmailServiceClientGrpc error connection: %v", err)
 	}
