@@ -38,7 +38,7 @@ func (s *EmailServiceClientGrpc) SendPasswordCode(email string, code string) err
 	ctx, span := trace.NewSpan(ctx, "emailServiceGrpc.SendPasswordCodeReq")
 	defer span.End()
 
-	s.verifyClientGrpc()
+	s.verifyClientGrpc(ctx)
 
 	req := &PasswordCodeReq{
 		Email: email,
@@ -69,7 +69,7 @@ func (s *EmailServiceClientGrpc) SendSupportMessage(message string) error {
 	ctx, span := trace.NewSpan(ctx, "emailServiceGrpc.SendSupportMessageReq")
 	defer span.End()
 
-	s.verifyClientGrpc()
+	s.verifyClientGrpc(ctx)
 
 	req := &SupportMessageReq{
 		Message: message,
@@ -90,16 +90,13 @@ func (s *EmailServiceClientGrpc) SendSupportMessage(message string) error {
 	return nil
 }
 
-func (s *EmailServiceClientGrpc) verifyClientGrpc() {
+func (s *EmailServiceClientGrpc) verifyClientGrpc(ctx context.Context) {
 	if grpcClient == nil {
-		s.createClientGrpc()
+		s.createClientGrpc(ctx)
 	}
 }
 
-func (s *EmailServiceClientGrpc) createClientGrpc() {
-	ctx, cancel := context.WithTimeout(context.Background(), time.Second*15)
-	defer cancel()
-
+func (s *EmailServiceClientGrpc) createClientGrpc(ctx context.Context) {
 	conn, err := grpc.DialContext(
 		ctx,
 		s.config.EmailService.Host,
@@ -123,8 +120,9 @@ func (s *EmailServiceClientGrpc) credentials() credentials.TransportCredentials 
 			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 		},
-		GetCertificate: s.service.GetLocalCertificate,
-		RootCAs:        s.service.GetLocalCertificateCA(),
+		InsecureSkipVerify: true,
+		GetCertificate:     s.service.GetLocalCertificate,
+		RootCAs:            s.service.GetLocalCertificateCA(),
 	}
 
 	return credentials.NewTLS(tls)

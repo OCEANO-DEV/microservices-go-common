@@ -38,13 +38,13 @@ func NewGrpcServer(
 
 func (s *GrpcServer) CreateGrpcServer() (*grpc.Server, error) {
 	grpcServer := grpc.NewServer(
+		grpc.Creds(s.credentials()),
 		grpc.KeepaliveParams(keepalive.ServerParameters{
 			MaxConnectionIdle: time.Duration(s.config.GrpcServer.MaxConnectionIdle) * time.Minute,
 			Timeout:           time.Duration(s.config.GrpcServer.Timeout) * time.Second,
 			MaxConnectionAge:  time.Duration(s.config.GrpcServer.MaxConnectionAge) * time.Minute,
 			Time:              time.Duration(s.config.GrpcServer.Timeout) * time.Minute,
 		}),
-		grpc.Creds(s.credentials()),
 		grpc.StreamInterceptor(grpc_middleware.ChainStreamServer(
 			grpc_ctxtags.StreamServerInterceptor(),
 			grpc_otel.StreamServerInterceptor(),
@@ -77,7 +77,6 @@ func (s *GrpcServer) credentials() credentials.TransportCredentials {
 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 		},
 		GetCertificate: s.service.GetLocalCertificate,
-		ClientAuth:     tls.RequireAndVerifyClientCert,
 		ClientCAs:      s.service.GetLocalCertificateCA(),
 	}
 

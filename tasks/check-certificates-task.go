@@ -46,7 +46,7 @@ func (task *CheckCertificatesTask) Start(ctx context.Context, certsDone chan boo
 					certHostOK := task.checkCertificateHost()
 
 					if !caCertOK || !certHostOK {
-						ticker.Reset(60 * time.Second)
+						ticker.Reset(15 * time.Second)
 						break
 					}
 				}
