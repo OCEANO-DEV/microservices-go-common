@@ -2,25 +2,30 @@ package proto
 
 import (
 	"context"
+	"crypto/tls"
 	"log"
 	"time"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/oceano-dev/microservices-go-common/config"
+	"github.com/oceano-dev/microservices-go-common/services"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
 	grpc "google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials"
 )
 
 type EmailServiceClientGrpc struct {
-	config *config.Config
+	config  *config.Config
+	service services.CertificatesService
 }
 
 func NewEmailServiceClientGrpc(
 	config *config.Config,
+	service services.CertificatesService,
 ) *EmailServiceClientGrpc {
 	return &EmailServiceClientGrpc{
-		config: config,
+		config:  config,
+		service: service,
 	}
 }
 
@@ -92,10 +97,28 @@ func (s *EmailServiceClientGrpc) verifyClientGrpc() {
 }
 
 func (s *EmailServiceClientGrpc) createClientGrpc() {
-	conn, err := grpc.Dial(s.config.EmailService.Host, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	conn, err := grpc.Dial(s.config.EmailService.Host, grpc.WithTransportCredentials(s.credentials()), grpc.WithBlock())
 	if err != nil {
 		log.Fatalf("EmailServiceClientGrpc error connection: %v", err)
 	}
 
 	grpcClient = NewEmailServiceClient(conn)
+}
+
+func (s *EmailServiceClientGrpc) credentials() credentials.TransportCredentials {
+	tls := &tls.Config{
+		MinVersion:               tls.VersionTLS12,
+		CurvePreferences:         []tls.CurveID{tls.CurveP521, tls.CurveP384, tls.CurveP256},
+		PreferServerCipherSuites: true,
+		CipherSuites: []uint16{
+			tls.TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA,
+			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
+			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
+		},
+		GetCertificate: s.service.GetLocalCertificate,
+		RootCAs:        s.service.GetLocalCertificateCA(),
+	}
+
+	return credentials.NewTLS(tls)
 }
