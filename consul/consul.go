@@ -46,10 +46,10 @@ func (c *ConsulClient) Register() error {
 	fmt.Println(httpCheck)
 
 	registration := &consul.AgentServiceRegistration{
-		ID:      serviceID,
-		Name:    c.config.AppName,
-		Port:    port,
-		Address: address,
+		ID:   serviceID,
+		Name: c.config.AppName,
+		Port: port,
+		//Address: address,
 		Check: &consul.AgentServiceCheck{
 			HTTP:                           httpCheck,
 			TLSSkipVerify:                  true,
