@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"github.com/oceano-dev/microservices-go-common/config"
@@ -20,22 +21,21 @@ type ConsulClient struct {
 
 func NewConsulClient(
 	config *config.Config,
-	client *consul.Client,
-) *ConsulClient {
+) (*ConsulClient, error) {
 	consulConfig := consul.DefaultConfig()
 	newClient, err := consul.NewClient(consulConfig)
 	if err != nil {
-		log.Fatalln(err)
+		return nil, err
 	}
 
 	return &ConsulClient{
 		config: config,
 		client: newClient,
-	}
+	}, nil
 }
 
 func (c *ConsulClient) Register() error {
-	port, err := strconv.Atoi(c.config.ListenPort)
+	port, err := strconv.Atoi(strings.Split(c.config.ListenPort, ":")[1])
 	if err != nil {
 		return err
 	}
@@ -66,6 +66,10 @@ func (c *ConsulClient) Register() error {
 	log.Printf("successfully consul register service: %s:%v", address, port)
 
 	return err
+}
+
+func (c *ConsulClient) Deregister() error {
+	return c.client.Agent().ServiceDeregister(c.config.AppName)
 }
 
 func (c *ConsulClient) Healthy() gin.HandlerFunc {
