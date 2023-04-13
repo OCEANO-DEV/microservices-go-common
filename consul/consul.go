@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -21,7 +22,10 @@ type ConsulClient struct {
 func NewConsulClient(
 	config *config.Config,
 ) (*ConsulClient, error) {
+
 	consulConfig := consul.DefaultConfig()
+	consulConfig.Address = config.Consul.Host
+
 	newClient, err := consul.NewClient(consulConfig)
 	if err != nil {
 		return nil, err
@@ -40,16 +44,16 @@ func (c *ConsulClient) Register() error {
 	}
 
 	serviceID := c.config.AppName
-	address := "localhost"
+	address := hostname()
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
 	fmt.Println(httpCheck)
 
 	registration := &consul.AgentServiceRegistration{
-		ID:   serviceID,
-		Name: c.config.AppName,
-		Port: port,
-		//Address: address,
+		ID:      serviceID,
+		Name:    c.config.AppName,
+		Port:    port,
+		Address: address,
 		Check: &consul.AgentServiceCheck{
 			HTTP:                           httpCheck,
 			TLSSkipVerify:                  true,
@@ -79,4 +83,13 @@ func (c *ConsulClient) Healthy() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	}
+}
+
+func hostname() string {
+	hostname, err := os.Hostname()
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	return hostname
 }

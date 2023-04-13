@@ -29,6 +29,7 @@ type Config struct {
 	EmailService    EmailServiceConfig    `json:"emailService"`
 	Postgres        PostgresConfig        `json:"postgres"`
 	Redis           RedisConfig           `json:"redis"`
+	Consul          ConsulConfig          `json:"consul"`
 }
 
 type MongoDBConfig struct {
@@ -145,6 +146,10 @@ type RedisConfig struct {
 	Password string `json:"password"`
 	Db       int    `json:"db"`
 	PoolSize int    `json:"poolSize"`
+}
+
+type ConsulConfig struct {
+	Host string `json:"host"`
 }
 
 func LoadConfig(production bool, path string) *Config {
