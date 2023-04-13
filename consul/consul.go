@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 
@@ -41,7 +40,7 @@ func (c *ConsulClient) Register() error {
 	}
 
 	serviceID := c.config.AppName
-	address := getHostName()
+	address := "localhost"
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
 	fmt.Println(httpCheck)
@@ -80,10 +79,4 @@ func (c *ConsulClient) Healthy() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	}
-}
-
-func getHostName() string {
-	hostname, _ := os.Hostname()
-
-	return hostname
 }
