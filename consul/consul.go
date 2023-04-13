@@ -43,13 +43,17 @@ func (c *ConsulClient) Register() error {
 	serviceID := c.config.AppName
 	address := getHostName()
 
+	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
+	fmt.Println(httpCheck)
+
 	registration := &consul.AgentServiceRegistration{
 		ID:      serviceID,
 		Name:    c.config.AppName,
 		Port:    port,
 		Address: address,
 		Check: &consul.AgentServiceCheck{
-			HTTP:                           fmt.Sprintf("https://%s:%v/healthy", address, port),
+			HTTP:                           httpCheck,
+			TLSSkipVerify:                  true,
 			Interval:                       "10s",
 			Timeout:                        "30s",
 			DeregisterCriticalServiceAfter: "1m",
@@ -74,7 +78,7 @@ func (c *ConsulClient) Deregister() error {
 
 func (c *ConsulClient) Healthy() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		c.JSON(http.StatusOK, "Consul check")
+		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	}
 }
 
