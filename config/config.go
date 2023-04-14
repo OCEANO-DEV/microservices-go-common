@@ -47,6 +47,7 @@ type CertificatesConfig struct {
 	FileNameKey                   string `json:"filenamekey"`
 	HashPermissionEndPoint        string `json:"hashPermissionEndPoint"`
 	PasswordPermissionEndPoint    string `json:"passwordPermissionEndPoint"`
+	ServiceName                   string `json:"serviceName"`
 	EndPointGetCertificateCA      string `json:"endPointGetCertificateCA"`
 	EndPointGetCertificateHost    string `json:"endPointGetCertificateHost"`
 	EndPointGetCertificateHostKey string `json:"endPointGetCertificateHostKey"`
@@ -65,6 +66,7 @@ type SecurityKeysConfig struct {
 	MinutesToRefreshPublicKeys  int    `json:"minutesToRefreshPublicKeys"`
 	SavePublicKeyToFile         bool   `json:"savePublicKeyToFile"`
 	FileECPPublicKey            string `json:"fileECPPublicKey"`
+	ServiceName                 string `json:"serviceName"`
 	EndPointGetPublicKeys       string `json:"endPointGetPublicKeys"`
 }
 
@@ -72,6 +74,7 @@ type SecurityRSAKeysConfig struct {
 	DaysToExpireRSAKeys            int    `json:"daysToExpireRSAKeys"`
 	MinutesToRefreshRSAPrivateKeys int    `json:"minutesToRefreshRSAPrivateKeys"`
 	MinutesToRefreshRSAPublicKeys  int    `json:"minutesToRefreshRSAPublicKeys"`
+	ServiceName                    string `json:"serviceName"`
 	EndPointGetRSAPublicKeys       string `json:"endPointGetRSAPublicKeys"`
 }
 
@@ -129,7 +132,7 @@ type GrpcServerConfig struct {
 }
 
 type EmailServiceConfig struct {
-	Host string `json:"host"`
+	ServiceName string `json:"serviceName"`
 }
 
 type PostgresConfig struct {
