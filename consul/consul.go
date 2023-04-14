@@ -12,13 +12,9 @@ import (
 	consul "github.com/hashicorp/consul/api"
 )
 
-type ConsulClient struct {
-	client *consul.Client
-}
-
 func NewConsulClient(
 	config *config.Config,
-) (*ConsulClient, error) {
+) (*consul.Client, error) {
 
 	consulConfig := consul.DefaultConfig()
 	consulConfig.Address = config.Consul.Host
@@ -33,9 +29,7 @@ func NewConsulClient(
 		return nil, err
 	}
 
-	return &ConsulClient{
-		client: consulClient,
-	}, nil
+	return consulClient, nil
 }
 
 func register(config *config.Config, client *consul.Client) error {
