@@ -3,8 +3,8 @@ package config
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/spf13/viper"
-	"github.com/twinj/uuid"
 )
 
 type Config struct {
@@ -174,7 +174,7 @@ func LoadConfig(production bool, path string) *Config {
 	config.Production = production
 
 	if config.Production {
-		config.Nats.ClientId += "_" + uuid.NewV4().String()
+		config.Nats.ClientId += "_" + uuid.New().String()
 
 		fmt.Printf("ENVIRONMENT: production\n")
 	}
