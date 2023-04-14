@@ -49,8 +49,11 @@ type CertificatesConfig struct {
 	HashPermissionEndPoint        string `json:"hashPermissionEndPoint"`
 	PasswordPermissionEndPoint    string `json:"passwordPermissionEndPoint"`
 	ServiceName                   string `json:"serviceName"`
+	APIPathCertificateCA          string `json:"apiPathCertificateCA"`
 	EndPointGetCertificateCA      string `json:"endPointGetCertificateCA"`
+	APIPathCertificateHost        string `json:"apiPathCertificateHost"`
 	EndPointGetCertificateHost    string `json:"endPointGetCertificateHost"`
+	APIPathCertificateHostKey     string `json:"apiPathCertificateHostKey"`
 	EndPointGetCertificateHostKey string `json:"endPointGetCertificateHostKey"`
 	MinutesToReloadCertificate    int    `json:"minutesToReloadCertificate"`
 }
@@ -68,6 +71,7 @@ type SecurityKeysConfig struct {
 	SavePublicKeyToFile         bool   `json:"savePublicKeyToFile"`
 	FileECPPublicKey            string `json:"fileECPPublicKey"`
 	ServiceName                 string `json:"serviceName"`
+	APIPathPublicKeys           string `json:"apiPathPublicKeys"`
 	EndPointGetPublicKeys       string `json:"endPointGetPublicKeys"`
 }
 
@@ -76,6 +80,7 @@ type SecurityRSAKeysConfig struct {
 	MinutesToRefreshRSAPrivateKeys int    `json:"minutesToRefreshRSAPrivateKeys"`
 	MinutesToRefreshRSAPublicKeys  int    `json:"minutesToRefreshRSAPublicKeys"`
 	ServiceName                    string `json:"serviceName"`
+	APIPathRSAPublicKeys           string `json:"apiPathRSAPublicKeys"`
 	EndPointGetRSAPublicKeys       string `json:"endPointGetRSAPublicKeys"`
 }
 

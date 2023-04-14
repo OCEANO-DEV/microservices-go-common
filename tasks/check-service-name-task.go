@@ -54,21 +54,21 @@ func (task *checkServiceNameTask) updateEndPoint(serviceName string, config *con
 
 	switch serviceName {
 	case "authentications":
-		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.EndPointGetCertificateCA)
+		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateCA)
 		config.Certificates.EndPointGetCertificateCA = endPoint
 
-		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.EndPointGetCertificateHost)
+		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHost)
 		config.Certificates.EndPointGetCertificateHost = endPoint
 
-		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.EndPointGetCertificateHostKey)
+		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHostKey)
 		config.Certificates.EndPointGetCertificateHostKey = endPoint
 
-		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityKeys.EndPointGetPublicKeys)
+		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityKeys.APIPathPublicKeys)
 		config.SecurityKeys.EndPointGetPublicKeys = endPoint
 		return true
 
 	case "payments":
-		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityRSAKeys.EndPointGetRSAPublicKeys)
+		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityRSAKeys.APIPathRSAPublicKeys)
 		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = endPoint
 		return true
 
