@@ -5,6 +5,7 @@ import (
 	"crypto/ecdsa"
 	"crypto/tls"
 	"encoding/json"
+	"fmt"
 	"io"
 	"log"
 	"net/http"
@@ -62,6 +63,8 @@ func (s *securityKeysService) requestJWKS(ctx context.Context) ([]byte, error) {
 				RootCAs:        s.service.GetLocalCertificateCA()},
 		},
 	}
+
+	fmt.Printf("s.config: %v", s.config)
 
 	var err error
 	request, err := http.NewRequestWithContext(ctx, "GET", s.config.SecurityKeys.EndPointGetPublicKeys, nil)
