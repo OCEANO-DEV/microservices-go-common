@@ -8,28 +8,29 @@ import (
 )
 
 type Config struct {
-	Production      bool                  `json:"production"`
-	AppName         string                `json:"appName"`
-	ApiVersion      string                `json:"apiVersion"`
-	Endpoint        string                `json:"endpoint"`
-	ListenPort      string                `json:"listenPort"`
-	Folders         []string              `json:"folders"`
-	MongoDB         MongoDBConfig         `json:"mongodb"`
-	Certificates    CertificatesConfig    `json:"certificates"`
-	Token           TokenConfig           `json:"token"`
-	SecurityKeys    SecurityKeysConfig    `json:"securityKeys"`
-	SecurityRSAKeys SecurityRSAKeysConfig `json:"securityRSAKeys"`
-	SMTPServer      SMTPConfig            `json:"smtpServer"`
-	Company         CompanyConfig         `json:"company"`
-	Prometheus      PrometheusConfig      `json:"prometheus"`
-	MongoDbExporter MongoDbExporterConfig `json:"mongoDbExporter"`
-	Nats            NatsConfig            `json:"nats"`
-	Jaeger          JaegerConfig          `json:"jaeger"`
-	GrpcServer      GrpcServerConfig      `json:"grpcServer"`
-	EmailService    EmailServiceConfig    `json:"emailService"`
-	Postgres        PostgresConfig        `json:"postgres"`
-	Redis           RedisConfig           `json:"redis"`
-	Consul          ConsulConfig          `json:"consul"`
+	Production                  bool                  `json:"production"`
+	AppName                     string                `json:"appName"`
+	ApiVersion                  string                `json:"apiVersion"`
+	Endpoint                    string                `json:"endpoint"`
+	ListenPort                  string                `json:"listenPort"`
+	Folders                     []string              `json:"folders"`
+	SecondsToReloadServicesName int                   `json:"secondsToReloadServicesName"`
+	MongoDB                     MongoDBConfig         `json:"mongodb"`
+	Certificates                CertificatesConfig    `json:"certificates"`
+	Token                       TokenConfig           `json:"token"`
+	SecurityKeys                SecurityKeysConfig    `json:"securityKeys"`
+	SecurityRSAKeys             SecurityRSAKeysConfig `json:"securityRSAKeys"`
+	SMTPServer                  SMTPConfig            `json:"smtpServer"`
+	Company                     CompanyConfig         `json:"company"`
+	Prometheus                  PrometheusConfig      `json:"prometheus"`
+	MongoDbExporter             MongoDbExporterConfig `json:"mongoDbExporter"`
+	Nats                        NatsConfig            `json:"nats"`
+	Jaeger                      JaegerConfig          `json:"jaeger"`
+	GrpcServer                  GrpcServerConfig      `json:"grpcServer"`
+	EmailService                EmailServiceConfig    `json:"emailService"`
+	Postgres                    PostgresConfig        `json:"postgres"`
+	Redis                       RedisConfig           `json:"redis"`
+	Consul                      ConsulConfig          `json:"consul"`
 }
 
 type MongoDBConfig struct {
@@ -133,6 +134,7 @@ type GrpcServerConfig struct {
 
 type EmailServiceConfig struct {
 	ServiceName string `json:"serviceName"`
+	Host        string `json:"host"`
 }
 
 type PostgresConfig struct {
