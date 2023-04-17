@@ -67,26 +67,26 @@ func (task *checkServiceNameTask) updateEndPoint(
 
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
-		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateCA)
+		endPoint := fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateCA)
 		config.Certificates.EndPointGetCertificateCA = endPoint
 
-		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHost)
+		endPoint = fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHost)
 		config.Certificates.EndPointGetCertificateHost = endPoint
 
-		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHostKey)
+		endPoint = fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHostKey)
 		config.Certificates.EndPointGetCertificateHostKey = endPoint
 
-		endPoint = fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityKeys.APIPathPublicKeys)
+		endPoint = fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityKeys.APIPathPublicKeys)
 		config.SecurityKeys.EndPointGetPublicKeys = endPoint
 		return true
 
 	case parse.SecurityRSAKeys:
-		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityRSAKeys.APIPathRSAPublicKeys)
+		endPoint := fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityRSAKeys.APIPathRSAPublicKeys)
 		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = endPoint
 		return true
 
 	case parse.EmailService:
-		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.EmailService.Host)
+		endPoint := fmt.Sprintf("%s:%s", service.Address, strconv.Itoa(service.Port))
 		config.EmailService.Host = endPoint
 		return true
 
