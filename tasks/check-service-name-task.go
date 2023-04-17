@@ -9,6 +9,8 @@ import (
 	consul "github.com/hashicorp/consul/api"
 	"github.com/oceano-dev/microservices-go-common/config"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
+
+	parse "github.com/oceano-dev/microservices-go-common/consul"
 )
 
 type checkServiceNameTask struct{}
@@ -17,7 +19,13 @@ func NewCheckServiceNameTask() *checkServiceNameTask {
 	return &checkServiceNameTask{}
 }
 
-func (task *checkServiceNameTask) ReloadServiceName(ctx context.Context, config *config.Config, consulClient *consul.Client, serviceName string, servicesNameDone chan bool) {
+func (task *checkServiceNameTask) ReloadServiceName(
+	ctx context.Context,
+	config *config.Config,
+	consulClient *consul.Client,
+	serviceName string,
+	consulParse parse.ConsulParse,
+	servicesNameDone chan bool) {
 	ticker := time.NewTicker(2500 * time.Millisecond)
 	quit := make(chan struct{})
 	go func() {
@@ -34,7 +42,7 @@ func (task *checkServiceNameTask) ReloadServiceName(ctx context.Context, config 
 					break
 				}
 
-				ok := task.updateEndPoint(serviceName, config, services)
+				ok := task.updateEndPoint(serviceName, config, services, consulParse)
 
 				fmt.Printf("start refresh service name successfully: %s\n", time.Now().UTC())
 				ticker.Reset(time.Duration(config.SecondsToReloadServicesName) * time.Second)
@@ -49,11 +57,16 @@ func (task *checkServiceNameTask) ReloadServiceName(ctx context.Context, config 
 	}()
 }
 
-func (task *checkServiceNameTask) updateEndPoint(serviceName string, config *config.Config, services map[string]*consul.AgentService) bool {
+func (task *checkServiceNameTask) updateEndPoint(
+	serviceName string,
+	config *config.Config,
+	services map[string]*consul.AgentService,
+	consulParse parse.ConsulParse,
+) bool {
 	service := services[serviceName]
 
-	switch serviceName {
-	case "authentications":
+	switch consulParse {
+	case parse.CertificatesAndSecurityKeys:
 		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateCA)
 		config.Certificates.EndPointGetCertificateCA = endPoint
 
@@ -67,12 +80,12 @@ func (task *checkServiceNameTask) updateEndPoint(serviceName string, config *con
 		config.SecurityKeys.EndPointGetPublicKeys = endPoint
 		return true
 
-	case "payments":
+	case parse.SecurityRSAKeys:
 		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityRSAKeys.APIPathRSAPublicKeys)
 		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = endPoint
 		return true
 
-	case "emails":
+	case parse.EmailService:
 		endPoint := fmt.Sprintf("%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.EmailService.Host)
 		config.EmailService.Host = endPoint
 		return true

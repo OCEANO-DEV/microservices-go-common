@@ -3,8 +3,7 @@ package consul
 type ConsulParse string
 
 const (
-	Certificates    ConsulParse = "Certificates"
-	SecurityKeys    ConsulParse = "SecurityKeys"
-	SecurityRSAKeys ConsulParse = "SecurityRSAKeys"
-	EmailService    ConsulParse = "EmailService"
+	CertificatesAndSecurityKeys ConsulParse = "CertificatesAndSecurityKeys"
+	SecurityRSAKeys             ConsulParse = "SecurityRSAKeys"
+	EmailService                ConsulParse = "EmailService"
 )
