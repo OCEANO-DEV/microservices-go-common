@@ -38,7 +38,7 @@ func register(config *config.Config, client *consul.Client) error {
 		return err
 	}
 
-	serviceID := config.AppName + strconv.Itoa(port)
+	serviceID := config.AppName
 	address := hostname()
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
@@ -46,7 +46,7 @@ func register(config *config.Config, client *consul.Client) error {
 
 	registration := &consul.AgentServiceRegistration{
 		ID:      serviceID,
-		Name:    config.AppName,
+		Name:    config.AppName + strconv.Itoa(port),
 		Port:    port,
 		Address: address,
 		Check: &consul.AgentServiceCheck{
