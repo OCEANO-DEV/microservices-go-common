@@ -44,10 +44,12 @@ func (task *checkServiceNameTask) ReloadServiceName(
 
 				ok := task.updateEndPoint(serviceName, config, services, consulParse)
 
-				fmt.Printf("start refresh service name %s successfully: %s\n", serviceName, time.Now().UTC())
 				ticker.Reset(time.Duration(config.SecondsToReloadServicesName) * time.Second)
 				if ok {
+					fmt.Printf("start refresh service name %s successfully: %s\n", serviceName, time.Now().UTC())
 					servicesNameDone <- ok
+				} else {
+					fmt.Printf("service name %s not found. Refresh was not successfully: %s\n", serviceName, time.Now().UTC())
 				}
 			case <-quit:
 				ticker.Stop()
