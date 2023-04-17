@@ -7,7 +7,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/google/uuid"
 	"github.com/oceano-dev/microservices-go-common/config"
 
 	consul "github.com/hashicorp/consul/api"
@@ -39,7 +38,7 @@ func register(config *config.Config, client *consul.Client) error {
 		return err
 	}
 
-	serviceID := uuid.New().String()
+	serviceID := config.AppName
 	address := hostname()
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
