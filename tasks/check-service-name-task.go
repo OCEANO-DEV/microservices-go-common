@@ -46,7 +46,7 @@ func (task *checkServiceNameTask) ReloadServiceName(
 
 				ticker.Reset(time.Duration(config.SecondsToReloadServicesName) * time.Second)
 				if ok {
-					fmt.Printf("start refresh service name %s successfully: %s\n", serviceName, time.Now().UTC())
+					fmt.Printf("refresh service name %s successfully: %s\n", serviceName, time.Now().UTC())
 					servicesNameDone <- ok
 				} else {
 					fmt.Printf("service name %s not found. Refresh was not successfully: %s\n", serviceName, time.Now().UTC())
