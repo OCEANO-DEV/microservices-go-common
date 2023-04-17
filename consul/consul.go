@@ -38,7 +38,7 @@ func register(config *config.Config, client *consul.Client) error {
 		return err
 	}
 
-	serviceID := config.AppName
+	serviceID := config.AppName + strconv.Itoa(port)
 	address := hostname()
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
