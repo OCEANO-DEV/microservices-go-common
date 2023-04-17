@@ -35,16 +35,16 @@ func (task *checkServiceNameTask) ReloadServiceName(
 				_, span := trace.NewSpan(ctx, "checkServiceNameTask.ReloadServiceName")
 				defer span.End()
 
-				services, error := consulClient.Agent().Services()
-				if error != nil {
-					fmt.Printf("failed to refresh service name %s. error: %s", serviceName, error)
+				services, err := consulClient.Agent().Services()
+				if err != nil {
+					fmt.Printf("failed to refresh service name %s. error: %s", serviceName, err)
 					ticker.Reset(5 * time.Second)
 					break
 				}
 
 				ok := task.updateEndPoint(serviceName, config, services, consulParse)
 
-				fmt.Printf("start refresh service name successfully: %s\n", time.Now().UTC())
+				fmt.Printf("start refresh service name %s successfully: %s\n", serviceName, time.Now().UTC())
 				ticker.Reset(time.Duration(config.SecondsToReloadServicesName) * time.Second)
 				if ok {
 					servicesNameDone <- ok
@@ -63,7 +63,11 @@ func (task *checkServiceNameTask) updateEndPoint(
 	services map[string]*consul.AgentService,
 	consulParse parse.ConsulParse,
 ) bool {
+
 	service := services[serviceName]
+	if service == nil {
+		return false
+	}
 
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
