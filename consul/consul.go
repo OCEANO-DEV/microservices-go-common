@@ -45,8 +45,9 @@ func register(config *config.Config, client *consul.Client) error {
 	fmt.Println(httpCheck)
 
 	registration := &consul.AgentServiceRegistration{
-		ID:      serviceID,
-		Name:    config.AppName + strconv.Itoa(port),
+		ID:   serviceID,
+		Name: config.AppName,
+		// Name:    fmt.Sprintf("%s-%s", config.AppName, strconv.Itoa(port)),
 		Port:    port,
 		Address: address,
 		Check: &consul.AgentServiceCheck{
