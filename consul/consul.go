@@ -33,16 +33,33 @@ func NewConsulClient(
 }
 
 func register(config *config.Config, client *consul.Client) error {
+
+	var check_port int
+	address := hostname()
+
 	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 	if err != nil {
 		return err
 	}
 
-	address := hostname()
+	if len(strings.TrimSpace(config.GrpcServer.Port)) == 0 {
+		check_port = port
+	} else {
+		port, err = strconv.Atoi(strings.Split(config.GrpcServer.Port, ":")[1])
+		if err != nil {
+			return err
+		}
+
+		check_port, err = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
+		if err != nil {
+			return err
+		}
+	}
+
 	serviceID := config.AppName
 	// serviceID := fmt.Sprintf("%s-%s:%v", config.AppName, address, port)
 
-	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
+	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, check_port)
 	fmt.Println(httpCheck)
 
 	registration := &consul.AgentServiceRegistration{
