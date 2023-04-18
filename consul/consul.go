@@ -38,18 +38,21 @@ func register(config *config.Config, client *consul.Client) error {
 		return err
 	}
 
-	serviceID := config.AppName
 	address := hostname()
+	serviceID := config.AppName
+	// serviceID := fmt.Sprintf("%s-%s:%v", config.AppName, address, port)
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, port)
 	fmt.Println(httpCheck)
 
 	registration := &consul.AgentServiceRegistration{
-		ID:   serviceID,
-		Name: config.AppName,
-		Port: port,
-		// Address: address,
+		ID:      serviceID,
+		Name:    config.AppName,
+		Port:    port,
+		Address: address,
 		Check: &consul.AgentServiceCheck{
+			CheckID:                        fmt.Sprintf("%s_app_status", config.AppName),
+			Name:                           fmt.Sprintf("%s application status", config.AppName),
 			HTTP:                           httpCheck,
 			TLSSkipVerify:                  true,
 			Interval:                       "10s",
@@ -61,10 +64,6 @@ func register(config *config.Config, client *consul.Client) error {
 	err = client.Agent().ServiceRegister(registration)
 
 	if err != nil {
-		log.Println("============================================")
-		log.Println(err)
-		log.Println("==========================================")
-
 		log.Printf("Failed consul to register service: %s:%v ", address, port)
 		return err
 	}
