@@ -71,29 +71,22 @@ func (task *checkServiceNameTask) updateEndPoint(
 		return false
 	}
 
+	host := fmt.Sprintf("https://%s:%s", service.Address, strconv.Itoa(service.Port))
+
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
-		endPoint := fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateCA)
-		config.Certificates.EndPointGetCertificateCA = endPoint
-
-		endPoint = fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHost)
-		config.Certificates.EndPointGetCertificateHost = endPoint
-
-		endPoint = fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.Certificates.APIPathCertificateHostKey)
-		config.Certificates.EndPointGetCertificateHostKey = endPoint
-
-		endPoint = fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityKeys.APIPathPublicKeys)
-		config.SecurityKeys.EndPointGetPublicKeys = endPoint
+		config.Certificates.EndPointGetCertificateCA = fmt.Sprintf("%s/%s", host, config.Certificates.APIPathCertificateCA)
+		config.Certificates.EndPointGetCertificateHost = fmt.Sprintf("%s/%s", host, config.Certificates.APIPathCertificateHost)
+		config.Certificates.EndPointGetCertificateHostKey = fmt.Sprintf("%s/%s", host, config.Certificates.APIPathCertificateHostKey)
+		config.SecurityKeys.EndPointGetPublicKeys = fmt.Sprintf("%s/%s", host, config.SecurityKeys.APIPathPublicKeys)
 		return true
 
 	case parse.SecurityRSAKeys:
-		endPoint := fmt.Sprintf("https://%s:%s/%s", service.Address, strconv.Itoa(service.Port), config.SecurityRSAKeys.APIPathRSAPublicKeys)
-		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = endPoint
+		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = fmt.Sprintf("%s/%s", host, config.SecurityRSAKeys.APIPathRSAPublicKeys)
 		return true
 
 	case parse.EmailService:
-		endPoint := fmt.Sprintf("%s:%s", service.Address, strconv.Itoa(service.Port))
-		config.EmailService.Host = endPoint
+		config.EmailService.Host = host
 		return true
 
 	default:
