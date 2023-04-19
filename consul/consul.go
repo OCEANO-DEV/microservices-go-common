@@ -81,7 +81,7 @@ func register(config *config.Config, client *consul.Client) error {
 	err = client.Agent().ServiceRegister(registration)
 
 	if err != nil {
-		log.Printf("Failed consul to register service: %s:%v ", address, port)
+		log.Printf("failed consul to register service: %s:%v ", address, port)
 		return err
 	}
 
