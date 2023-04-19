@@ -3,6 +3,7 @@ package tasks
 import (
 	"context"
 	"fmt"
+	"math/rand"
 	"strconv"
 	"time"
 
@@ -35,7 +36,8 @@ func (task *checkServiceNameTask) ReloadServiceName(
 				_, span := trace.NewSpan(ctx, "checkServiceNameTask.ReloadServiceName")
 				defer span.End()
 
-				services, err := consulClient.Agent().Services()
+				services, _, err := consulClient.Catalog().Service(serviceName, "", nil)
+				// services, err := consulClient.Agent().Services()
 				if err != nil {
 					fmt.Printf("failed to refresh service name %s. error: %s", serviceName, err)
 					ticker.Reset(5 * time.Second)
@@ -62,16 +64,24 @@ func (task *checkServiceNameTask) ReloadServiceName(
 func (task *checkServiceNameTask) updateEndPoint(
 	serviceName string,
 	config *config.Config,
-	services map[string]*consul.AgentService,
+	services []*consul.CatalogService,
+	// services map[string]*consul.AgentService,
 	consulParse parse.ConsulParse,
 ) bool {
 
-	service := services[serviceName]
-	if service == nil {
+	if len(services) <= 0 {
 		return false
 	}
 
-	host := fmt.Sprintf("https://%s:%s", service.Address, strconv.Itoa(service.Port))
+	qtd := len(services)
+	service := services[rand.Intn(qtd)]
+
+	// service := services[serviceName]
+	// if service == nil {
+	// 	return false
+	// }
+
+	host := fmt.Sprintf("https://%s:%s", service.Address, strconv.Itoa(service.ServicePort))
 
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
