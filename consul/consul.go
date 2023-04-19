@@ -119,6 +119,11 @@ func getPort(appName string) (int, error) {
 	filters.Add("name", appName)
 
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
+
+	fmt.Println("======================================================")
+	fmt.Println(containers)
+	fmt.Println("======================================================")
+
 	if err != nil {
 		return 0, err
 	}
