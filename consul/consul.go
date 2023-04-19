@@ -118,6 +118,7 @@ func getPort(hostname string) (int, error) {
 	filters.Add("hostname", hostname)
 
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
+	fmt.Printf("containers: %v", containers)
 	if err != nil {
 		return 0, err
 	}
