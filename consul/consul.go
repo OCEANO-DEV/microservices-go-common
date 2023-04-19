@@ -14,6 +14,7 @@ import (
 	"github.com/oceano-dev/microservices-go-common/config"
 
 	consul "github.com/hashicorp/consul/api"
+	"github.com/shirou/gopsutil/v3/net"
 )
 
 func NewConsulClient(
@@ -109,6 +110,12 @@ func hostname() string {
 }
 
 func getPort(hostname string) (int, error) {
+	n, _ := net.Connections("tcp")
+
+	port := n[0].Laddr.Port
+
+	fmt.Println(port)
+
 	cli, err := docker.NewClientWithOpts(docker.FromEnv)
 	if err != nil {
 		return 0, err
