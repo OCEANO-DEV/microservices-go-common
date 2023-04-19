@@ -1,16 +1,12 @@
 package consul
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 
-	"github.com/docker/docker/api/types"
-	"github.com/docker/docker/api/types/filters"
-	"github.com/docker/docker/client"
 	"github.com/oceano-dev/microservices-go-common/config"
 
 	consul "github.com/hashicorp/consul/api"
@@ -41,22 +37,17 @@ func register(config *config.Config, client *consul.Client) error {
 	var check_port int
 	address := hostname()
 
-	// port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
-	port, err := getPort(config.AppName)
+	// port, err := getPort(config.AppName)
+	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 	if port == 0 || err != nil {
-		port, _ = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
-		// return err
+		// port, _ = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
+		return err
 	}
 
-	if len(strings.TrimSpace(config.GrpcServer.Port)) == 0 {
-		check_port = port
-	} else {
-		port, err = strconv.Atoi(strings.Split(config.GrpcServer.Port, ":")[1])
-		if err != nil {
-			return err
-		}
+	check_port = port
 
-		check_port, err = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
+	if len(strings.TrimSpace(config.GrpcServer.Port)) > 0 {
+		port, err = strconv.Atoi(strings.Split(config.GrpcServer.Port, ":")[1])
 		if err != nil {
 			return err
 		}
@@ -109,28 +100,28 @@ func hostname() string {
 	return hostname
 }
 
-func getPort(appName string) (int, error) {
-	cli, err := client.NewClientWithOpts(client.FromEnv)
-	if err != nil {
-		return 0, err
-	}
+// func getPort(appName string) (int, error) {
+// 	cli, err := client.NewClientWithOpts(client.FromEnv)
+// 	if err != nil {
+// 		return 0, err
+// 	}
 
-	filters := filters.NewArgs()
-	filters.Add("name", appName)
+// 	filters := filters.NewArgs()
+// 	filters.Add("name", appName)
 
-	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
+// 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
 
-	fmt.Println("======================================================")
-	fmt.Println(containers)
-	fmt.Println("======================================================")
+// 	fmt.Println("======================================================")
+// 	fmt.Println(containers)
+// 	fmt.Println("======================================================")
 
-	if err != nil {
-		return 0, err
-	}
+// 	if err != nil {
+// 		return 0, err
+// 	}
 
-	if len(containers) == 0 {
-		return 0, nil
-	}
+// 	if len(containers) == 0 {
+// 		return 0, nil
+// 	}
 
-	return int(containers[0].Ports[0].PublicPort), nil
-}
+// 	return int(containers[0].Ports[0].PublicPort), nil
+// }
