@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -109,6 +110,10 @@ func hostname() string {
 }
 
 func getPort(hostname string) (int, error) {
+
+	r3, _ := net.ResolveIPAddr("ip", hostname)
+	log.Printf("Result of ResolveIPAddr: %v", r3)
+
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return 0, err
