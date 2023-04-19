@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"net"
 	"os"
 	"strconv"
 	"strings"
@@ -43,9 +42,10 @@ func register(config *config.Config, client *consul.Client) error {
 	address := hostname()
 
 	// port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
-	port, err := getPort(address)
+	port, err := getPort(config.AppName)
 	if err != nil {
-		return err
+		port, _ = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
+		// return err
 	}
 
 	if len(strings.TrimSpace(config.GrpcServer.Port)) == 0 {
@@ -109,21 +109,16 @@ func hostname() string {
 	return hostname
 }
 
-func getPort(hostname string) (int, error) {
-
-	r3, _ := net.ResolveIPAddr("ip", hostname)
-	log.Printf("Result of ResolveIPAddr: %v", r3)
-
+func getPort(appName string) (int, error) {
 	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return 0, err
 	}
 
 	filters := filters.NewArgs()
-	filters.Add("hostname", hostname)
+	filters.Add("name", appName)
 
 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
-	fmt.Printf("containers: %v", containers)
 	if err != nil {
 		return 0, err
 	}
