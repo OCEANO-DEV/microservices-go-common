@@ -43,7 +43,7 @@ func register(config *config.Config, client *consul.Client) error {
 
 	// port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 	port, err := getPort(config.AppName)
-	if err != nil {
+	if port == 0 || err != nil {
 		port, _ = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 		// return err
 	}
