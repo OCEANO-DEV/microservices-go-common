@@ -10,11 +10,12 @@ import (
 
 	"github.com/docker/docker/api/types"
 	"github.com/docker/docker/api/types/filters"
-	docker "github.com/docker/docker/client"
+	"github.com/docker/docker/client"
 	"github.com/oceano-dev/microservices-go-common/config"
+	"github.com/shirou/gopsutil/docker"
+	"github.com/shirou/gopsutil/net"
 
 	consul "github.com/hashicorp/consul/api"
-	"github.com/shirou/gopsutil/v3/net"
 )
 
 func NewConsulClient(
@@ -116,7 +117,10 @@ func getPort(hostname string) (int, error) {
 
 	fmt.Println(port)
 
-	cli, err := docker.NewClientWithOpts(docker.FromEnv)
+	l, err := docker.GetDockerIDList()
+	fmt.Println(l)
+
+	cli, err := client.NewClientWithOpts(client.FromEnv)
 	if err != nil {
 		return 0, err
 	}
