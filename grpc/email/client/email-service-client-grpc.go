@@ -10,7 +10,7 @@ import (
 	"github.com/oceano-dev/microservices-go-common/config"
 	"github.com/oceano-dev/microservices-go-common/services"
 	trace "github.com/oceano-dev/microservices-go-common/trace/otel"
-	grpc "google.golang.org/grpc"
+	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 )
 

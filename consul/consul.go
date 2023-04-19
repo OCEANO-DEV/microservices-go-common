@@ -1,12 +1,16 @@
 package consul
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
 	"strconv"
 	"strings"
 
+	"github.com/docker/docker/api/types"
+	"github.com/docker/docker/api/types/filters"
+	docker "github.com/docker/docker/client"
 	"github.com/oceano-dev/microservices-go-common/config"
 
 	consul "github.com/hashicorp/consul/api"
@@ -37,7 +41,8 @@ func register(config *config.Config, client *consul.Client) error {
 	var check_port int
 	address := hostname()
 
-	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
+	// port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
+	port, err := getPort(address)
 	if err != nil {
 		return err
 	}
@@ -101,4 +106,25 @@ func hostname() string {
 	}
 
 	return hostname
+}
+
+func getPort(hostname string) (int, error) {
+	cli, err := docker.NewClientWithOpts(docker.FromEnv)
+	if err != nil {
+		return 0, err
+	}
+
+	filters := filters.NewArgs()
+	filters.Add("hostname", hostname)
+
+	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
+	if err != nil {
+		return 0, err
+	}
+
+	if len(containers) == 0 {
+		return 0, nil
+	}
+
+	return int(containers[0].Ports[0].PublicPort), nil
 }
