@@ -14,32 +14,32 @@ import (
 
 func NewConsulClient(
 	config *config.Config,
-) (*consul.Client, error) {
+) (*consul.Client, string, error) {
 
 	consulConfig := consul.DefaultConfig()
 	consulConfig.Address = config.Consul.Host
 
 	consulClient, err := consul.NewClient(consulConfig)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	err = register(config, consulClient)
+	serviceID, err := register(config, consulClient)
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
-	return consulClient, nil
+	return consulClient, serviceID, nil
 }
 
-func register(config *config.Config, client *consul.Client) error {
+func register(config *config.Config, client *consul.Client) (string, error) {
 
 	var check_port int
 	address := hostname()
 
 	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 	if port == 0 || err != nil {
-		return err
+		return "", err
 	}
 
 	check_port = port
@@ -47,7 +47,7 @@ func register(config *config.Config, client *consul.Client) error {
 	if len(strings.TrimSpace(config.GrpcServer.Port)) > 0 {
 		port, err = strconv.Atoi(strings.Split(config.GrpcServer.Port, ":")[1])
 		if err != nil {
-			return err
+			return "", err
 		}
 	}
 
@@ -76,12 +76,12 @@ func register(config *config.Config, client *consul.Client) error {
 
 	if err != nil {
 		log.Printf("failed consul to register service: %s:%v ", address, port)
-		return err
+		return "", err
 	}
 
 	log.Printf("successfully consul register service: %s:%v", address, port)
 
-	return nil
+	return serviceID, nil
 }
 
 func hostname() string {
