@@ -65,7 +65,7 @@ func register(config *config.Config, client *consul.Client) error {
 		Port:    port,
 		Address: address,
 		Check: &consul.AgentServiceCheck{
-			CheckID:                        fmt.Sprintf("service:%s", serviceID),
+			CheckID:                        serviceID,
 			Name:                           fmt.Sprintf("Service %s check", config.AppName),
 			HTTP:                           httpCheck,
 			TLSSkipVerify:                  true,
