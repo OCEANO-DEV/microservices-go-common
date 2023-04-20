@@ -68,7 +68,7 @@ func register(config *config.Config, client *consul.Client) (string, error) {
 			TLSSkipVerify:                  true,
 			Interval:                       "10s",
 			Timeout:                        "30s",
-			DeregisterCriticalServiceAfter: "30m",
+			DeregisterCriticalServiceAfter: "30s",
 		},
 	}
 
