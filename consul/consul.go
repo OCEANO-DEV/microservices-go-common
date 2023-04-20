@@ -37,10 +37,8 @@ func register(config *config.Config, client *consul.Client) error {
 	var check_port int
 	address := hostname()
 
-	// port, err := getPort(config.AppName)
 	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 	if port == 0 || err != nil {
-		// port, _ = strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 		return err
 	}
 
@@ -53,7 +51,6 @@ func register(config *config.Config, client *consul.Client) error {
 		}
 	}
 
-	// serviceID := config.AppName
 	serviceID := fmt.Sprintf("%s-%s:%v", config.AppName, address, port)
 
 	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, check_port)
@@ -87,10 +84,6 @@ func register(config *config.Config, client *consul.Client) error {
 	return nil
 }
 
-// func deregister(config *config.Config, client *consul.Client) error {
-// 	return client.Agent().ServiceDeregister(config.AppName)
-// }
-
 func hostname() string {
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -99,29 +92,3 @@ func hostname() string {
 
 	return hostname
 }
-
-// func getPort(appName string) (int, error) {
-// 	cli, err := client.NewClientWithOpts(client.FromEnv)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	filters := filters.NewArgs()
-// 	filters.Add("name", appName)
-
-// 	containers, err := cli.ContainerList(context.Background(), types.ContainerListOptions{Filters: filters})
-
-// 	fmt.Println("======================================================")
-// 	fmt.Println(containers)
-// 	fmt.Println("======================================================")
-
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	if len(containers) == 0 {
-// 		return 0, nil
-// 	}
-
-// 	return int(containers[0].Ports[0].PublicPort), nil
-// }
