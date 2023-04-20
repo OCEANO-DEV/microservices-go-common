@@ -74,7 +74,11 @@ func (task *checkServiceNameTask) updateEndPoint(
 	}
 
 	qtd := len(services)
-	service := services[rand.Intn(qtd)-1]
+	subtract := 0
+	if qtd > 0 {
+		subtract = 1
+	}
+	service := services[rand.Intn(qtd)-subtract]
 
 	// service := services[serviceName]
 	// if service == nil {
