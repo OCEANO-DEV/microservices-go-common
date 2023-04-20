@@ -65,8 +65,8 @@ func register(config *config.Config, client *consul.Client) error {
 		Port:    port,
 		Address: address,
 		Check: &consul.AgentServiceCheck{
-			CheckID:                        fmt.Sprintf("%s_app_status", config.AppName),
-			Name:                           fmt.Sprintf("%s application status", config.AppName),
+			CheckID:                        fmt.Sprintf("service:%s", serviceID),
+			Name:                           fmt.Sprintf("Service %s check", config.AppName),
 			HTTP:                           httpCheck,
 			TLSSkipVerify:                  true,
 			Interval:                       "10s",
