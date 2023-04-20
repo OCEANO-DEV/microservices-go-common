@@ -69,16 +69,11 @@ func (task *checkServiceNameTask) updateEndPoint(
 	consulParse parse.ConsulParse,
 ) bool {
 
-	if len(services) <= 0 {
+	if len(services) == 0 {
 		return false
 	}
 
-	qtd := len(services)
-	subtract := 0
-	if qtd > 0 {
-		subtract = 1
-	}
-	service := services[rand.Intn(qtd)-subtract]
+	service := services[rand.Intn(len(services))]
 
 	// service := services[serviceName]
 	// if service == nil {
