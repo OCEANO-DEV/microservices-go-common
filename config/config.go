@@ -11,7 +11,6 @@ type Config struct {
 	Production                  bool                  `json:"production"`
 	AppName                     string                `json:"appName"`
 	ApiVersion                  string                `json:"apiVersion"`
-	Endpoint                    string                `json:"endpoint"`
 	ListenPort                  string                `json:"listenPort"`
 	Folders                     []string              `json:"folders"`
 	SecondsToReloadServicesName int                   `json:"secondsToReloadServicesName"`

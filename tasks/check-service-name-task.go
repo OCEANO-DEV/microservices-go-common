@@ -73,7 +73,7 @@ func (task *checkServiceNameTask) updateEndPoint(
 
 	service := services[rand.Intn(len(services))]
 
-	address := config.Endpoint
+	address := "localhost"
 	if config.Production {
 		address = service.ServiceAddress
 	}
