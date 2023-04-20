@@ -80,7 +80,12 @@ func (task *checkServiceNameTask) updateEndPoint(
 	// 	return false
 	// }
 
-	host := fmt.Sprintf("https://%s:%s", service.Address, strconv.Itoa(service.ServicePort))
+	address := config.Endpoint
+	if config.Production {
+		address = service.ServiceAddress
+	}
+
+	host := fmt.Sprintf("https://%s:%s", address, strconv.Itoa(service.ServicePort))
 
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
