@@ -37,7 +37,6 @@ func (task *checkServiceNameTask) ReloadServiceName(
 				defer span.End()
 
 				services, _, err := consulClient.Catalog().Service(serviceName, "", nil)
-				// services, err := consulClient.Agent().Services()
 				if err != nil {
 					fmt.Printf("failed to refresh service name %s. error: %s", serviceName, err)
 					ticker.Reset(5 * time.Second)
@@ -65,7 +64,6 @@ func (task *checkServiceNameTask) updateEndPoint(
 	serviceName string,
 	config *config.Config,
 	services []*consul.CatalogService,
-	// services map[string]*consul.AgentService,
 	consulParse parse.ConsulParse,
 ) bool {
 
@@ -75,18 +73,13 @@ func (task *checkServiceNameTask) updateEndPoint(
 
 	service := services[rand.Intn(len(services))]
 
-	// service := services[serviceName]
-	// if service == nil {
-	// 	return false
-	// }
-
 	address := config.Endpoint
 	if config.Production {
 		address = service.ServiceAddress
 	}
 
 	host := fmt.Sprintf("https://%s:%s", address, strconv.Itoa(service.ServicePort))
-	fmt.Printf("host selected: %s", host)
+	fmt.Println("host selected: ", host)
 
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
