@@ -3,7 +3,6 @@ package consul
 import (
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
 
@@ -35,7 +34,8 @@ func NewConsulClient(
 func register(config *config.Config, client *consul.Client) (string, error) {
 
 	var check_port int
-	address := hostname()
+	// address := hostname()
+	address := fmt.Sprintf("%s-srv", config.AppName)
 
 	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
 	if port == 0 || err != nil {
@@ -84,11 +84,11 @@ func register(config *config.Config, client *consul.Client) (string, error) {
 	return serviceID, nil
 }
 
-func hostname() string {
-	hostname, err := os.Hostname()
-	if err != nil {
-		log.Fatalln(err)
-	}
+// func hostname() string {
+// 	hostname, err := os.Hostname()
+// 	if err != nil {
+// 		log.Fatalln(err)
+// 	}
 
-	return hostname
-}
+// 	return hostname
+// }
