@@ -120,7 +120,7 @@ func getServiceNameKubernetes(podName string) (string, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	pod, err := clientset.CoreV1().Pods("").Get(ctx, podName, metav1.GetOptions{})
+	pod, err := clientset.CoreV1().Pods("default").Get(ctx, podName, metav1.GetOptions{})
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "error getting pod information: %v\n", err)
 		return "", err
