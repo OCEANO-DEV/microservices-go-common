@@ -37,11 +37,9 @@ func register(config *config.Config, client *consul.Client) (string, error) {
 	var check_port int
 	address := hostname()
 
-	var cluster = ""
 	k8s, _ := strconv.ParseBool(os.Getenv("kubernetes"))
 	if k8s {
-		address = fmt.Sprintf("%s-srv", config.AppName)
-		cluster = ".default.svc.cluster.local"
+		address = fmt.Sprintf("%s-srv.default.svc.cluster.local", config.AppName)
 	}
 
 	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])
@@ -60,7 +58,7 @@ func register(config *config.Config, client *consul.Client) (string, error) {
 
 	serviceID := fmt.Sprintf("%s-%s:%v", config.AppName, address, port)
 
-	httpCheck := fmt.Sprintf("https://%s:%v%s/healthy", address, check_port, cluster)
+	httpCheck := fmt.Sprintf("https://%s:%v/healthy", address, check_port)
 	fmt.Println(httpCheck)
 
 	registration := &consul.AgentServiceRegistration{
