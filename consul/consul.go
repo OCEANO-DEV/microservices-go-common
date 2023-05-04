@@ -39,7 +39,7 @@ func register(config *config.Config, client *consul.Client) (string, error) {
 
 	k8s, _ := strconv.ParseBool(os.Getenv("kubernetes"))
 	if k8s {
-		address = fmt.Sprintf("%s-srv.default.svc.cluster.local", config.AppName)
+		address = fmt.Sprintf("%s-%s", config.AppName, config.KubernetesServiceNameSuffix)
 	}
 
 	port, err := strconv.Atoi(strings.Split(config.ListenPort, ":")[1])

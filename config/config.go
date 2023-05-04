@@ -11,6 +11,7 @@ type Config struct {
 	Production                  bool                  `json:"production"`
 	AppName                     string                `json:"appName"`
 	ApiVersion                  string                `json:"apiVersion"`
+	KubernetesServiceNameSuffix string                `json:"kubernetesServiceNameSuffix"`
 	ListenPort                  string                `json:"listenPort"`
 	Folders                     []string              `json:"folders"`
 	SecondsToReloadServicesName int                   `json:"secondsToReloadServicesName"`
