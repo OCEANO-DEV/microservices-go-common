@@ -11,6 +11,7 @@ func CORS() gin.HandlerFunc {
 	return cors.New(cors.Config{
 		// AllowAllOrigins:  true,
 		AllowOrigins: []string{
+			"https://localhost",
 			"http://localhost:3000",
 			"https://localhost:3000",
 			"https://mymicroservices.com"},
