@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
@@ -184,6 +185,16 @@ func LoadConfig(production bool, path string) *Config {
 	config.Production = production
 
 	if config.Production {
+		if checkEnvFile() {
+			viper.SetConfigFile(".env")
+			viper.ReadInConfig()
+			config.Certificates.HashPermissionEndPoint = fmt.Sprintln(viper.Get("HASHPERMISSIONENDPOINT"))
+			config.Certificates.PasswordPermissionEndPoint = fmt.Sprintln(viper.Get("PASSWORDPERMISSIONENDPOINT"))
+		} else {
+			config.Certificates.HashPermissionEndPoint = os.Getenv("HASHPERMISSIONENDPOINT")
+			config.Certificates.PasswordPermissionEndPoint = os.Getenv("PASSWORDPERMISSIONENDPOINT")
+		}
+
 		config.Nats.ClientId += "_" + uuid.New().String()
 
 		fmt.Printf("ENVIRONMENT: production\n")
@@ -193,4 +204,13 @@ func LoadConfig(production bool, path string) *Config {
 	fmt.Printf("NATS_URL: %s\n", config.Nats.Url)
 
 	return config
+}
+
+func checkEnvFile() bool {
+	info, err := os.Stat(".env")
+	if os.IsNotExist(err) {
+		return false
+	}
+
+	return !info.IsDir()
 }
