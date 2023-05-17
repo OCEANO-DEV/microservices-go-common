@@ -188,6 +188,7 @@ func LoadConfig(production bool, path string) *Config {
 		HASH := "HASHPERMISSIONENDPOINT"
 		PASSWORD := "PASSWORDPERMISSIONENDPOINT"
 		if checkEnvFile() {
+			viper.Reset()
 			viper.SetConfigFile(".env")
 			viper.ReadInConfig()
 			config.Certificates.HashPermissionEndPoint = fmt.Sprintln(viper.Get(HASH))
