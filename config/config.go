@@ -185,14 +185,16 @@ func LoadConfig(production bool, path string) *Config {
 	config.Production = production
 
 	if config.Production {
+		HASH := "HASHPERMISSIONENDPOINT"
+		PASSWORD := "PASSWORDPERMISSIONENDPOINT"
 		if checkEnvFile() {
 			viper.SetConfigFile(".env")
 			viper.ReadInConfig()
-			config.Certificates.HashPermissionEndPoint = fmt.Sprintln(viper.Get("HASHPERMISSIONENDPOINT"))
-			config.Certificates.PasswordPermissionEndPoint = fmt.Sprintln(viper.Get("PASSWORDPERMISSIONENDPOINT"))
+			config.Certificates.HashPermissionEndPoint = fmt.Sprintln(viper.Get(HASH))
+			config.Certificates.PasswordPermissionEndPoint = fmt.Sprintln(viper.Get(PASSWORD))
 		} else {
-			config.Certificates.HashPermissionEndPoint = os.Getenv("HASHPERMISSIONENDPOINT")
-			config.Certificates.PasswordPermissionEndPoint = os.Getenv("PASSWORDPERMISSIONENDPOINT")
+			config.Certificates.HashPermissionEndPoint = os.Getenv(HASH)
+			config.Certificates.PasswordPermissionEndPoint = os.Getenv(PASSWORD)
 		}
 
 		config.Nats.ClientId += "_" + uuid.New().String()
