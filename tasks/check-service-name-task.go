@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
+	"strings"
 	"time"
 
 	consul "github.com/hashicorp/consul/api"
@@ -94,7 +95,7 @@ func (task *checkServiceNameTask) updateEndPoint(
 		return true
 
 	case parse.EmailService:
-		config.EmailService.Host = host
+		config.EmailService.Host = strings.ReplaceAll(host, "https://", "")
 		return true
 
 	default:
