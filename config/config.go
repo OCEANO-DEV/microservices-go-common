@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/google/uuid"
@@ -201,6 +202,13 @@ func LoadConfig(production bool, path string) *Config {
 		config.Nats.ClientId += "_" + uuid.New().String()
 
 		fmt.Printf("ENVIRONMENT: production\n")
+	}
+
+	if len(string(config.Certificates.HashPermissionEndPoint)) == 0 {
+		log.Fatal("HashPermissionEndPoint cannot be a null or empty value")
+	}
+	if len(string(config.Certificates.PasswordPermissionEndPoint)) == 0 {
+		log.Fatal("PasswordPermissionEndPoint cannot be a null or empty value")
 	}
 
 	fmt.Printf("MONGO_HOST: %s\nMONGO_PORT: %s\n", config.MongoDB.Host, config.MongoDB.Port)
