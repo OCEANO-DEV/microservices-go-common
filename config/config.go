@@ -188,15 +188,36 @@ func LoadConfig(production bool, path string) *Config {
 	if config.Production {
 		HASH := "HASHPERMISSIONENDPOINT"
 		PASSWORD := "PASSWORDPERMISSIONENDPOINT"
+		MONGO_USER := "MONGO_USER"
+		MONGO_PASSWORD := "MONGO_PASSWORD"
+		POSTGRES_USER := "POSTGRES_USER"
+		POSTGRES_PASSWORD := "POSTGRES_PASSWORD"
+		REDIS_PASSWORD := "REDIS_PASSWORD"
+		MONGO_EXPORTER_USER := "MONGO_EXPORTER_USER"
+		MONGO_EXPORTER_PASSWORD := "MONGO_EXPORTER_PASSWORD"
 		if checkEnvFile() {
 			viper.Reset()
 			viper.SetConfigFile(".env")
 			viper.ReadInConfig()
-			config.Certificates.HashPermissionEndPoint = fmt.Sprintln(viper.Get(HASH))
-			config.Certificates.PasswordPermissionEndPoint = fmt.Sprintln(viper.Get(PASSWORD))
+			config.Certificates.HashPermissionEndPoint = viper.GetString(HASH)
+			config.Certificates.PasswordPermissionEndPoint = viper.GetString(PASSWORD)
+			config.MongoDB.User = viper.GetString(MONGO_USER)
+			config.MongoDB.Password = viper.GetString(MONGO_PASSWORD)
+			config.Postgres.User = viper.GetString(POSTGRES_USER)
+			config.Postgres.Password = viper.GetString(POSTGRES_PASSWORD)
+			config.Redis.Password = viper.GetString(REDIS_PASSWORD)
+			config.MongoDbExporter.User = viper.GetString(MONGO_EXPORTER_USER)
+			config.MongoDbExporter.Password = viper.GetString(MONGO_EXPORTER_PASSWORD)
 		} else {
 			config.Certificates.HashPermissionEndPoint = os.Getenv(HASH)
 			config.Certificates.PasswordPermissionEndPoint = os.Getenv(PASSWORD)
+			config.MongoDB.User = os.Getenv(MONGO_USER)
+			config.MongoDB.Password = os.Getenv(MONGO_PASSWORD)
+			config.Postgres.User = os.Getenv(POSTGRES_USER)
+			config.Postgres.Password = os.Getenv(POSTGRES_PASSWORD)
+			config.Redis.Password = os.Getenv(REDIS_PASSWORD)
+			config.MongoDbExporter.User = os.Getenv(MONGO_EXPORTER_USER)
+			config.MongoDbExporter.Password = os.Getenv(MONGO_EXPORTER_PASSWORD)
 		}
 
 		config.Nats.ClientId += "_" + uuid.New().String()
