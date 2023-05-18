@@ -195,6 +195,8 @@ func LoadConfig(production bool, path string) *Config {
 		REDIS_PASSWORD := "REDIS_PASSWORD"
 		MONGO_EXPORTER_USER := "MONGO_EXPORTER_USER"
 		MONGO_EXPORTER_PASSWORD := "MONGO_EXPORTER_PASSWORD"
+		SMTP_SERVER_USER := "SMTP_SERVER_USER"
+		SMTP_SERVER_PASSWORD := "SMTP_SERVER_PASSWORD"
 		if checkEnvFile() {
 			viper.Reset()
 			viper.SetConfigFile(".env")
@@ -208,6 +210,8 @@ func LoadConfig(production bool, path string) *Config {
 			config.Redis.Password = viper.GetString(REDIS_PASSWORD)
 			config.MongoDbExporter.User = viper.GetString(MONGO_EXPORTER_USER)
 			config.MongoDbExporter.Password = viper.GetString(MONGO_EXPORTER_PASSWORD)
+			config.SMTPServer.Username = viper.GetString(SMTP_SERVER_USER)
+			config.SMTPServer.Password = viper.GetString(SMTP_SERVER_PASSWORD)
 		} else {
 			config.Certificates.HashPermissionEndPoint = os.Getenv(HASH)
 			config.Certificates.PasswordPermissionEndPoint = os.Getenv(PASSWORD)
@@ -218,6 +222,8 @@ func LoadConfig(production bool, path string) *Config {
 			config.Redis.Password = os.Getenv(REDIS_PASSWORD)
 			config.MongoDbExporter.User = os.Getenv(MONGO_EXPORTER_USER)
 			config.MongoDbExporter.Password = os.Getenv(MONGO_EXPORTER_PASSWORD)
+			config.SMTPServer.Username = os.Getenv(SMTP_SERVER_USER)
+			config.SMTPServer.Password = os.Getenv(SMTP_SERVER_PASSWORD)
 		}
 
 		config.Nats.ClientId += "_" + uuid.New().String()
