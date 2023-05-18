@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"math/rand"
 	"strconv"
-	"strings"
 	"time"
 
 	consul "github.com/hashicorp/consul/api"
@@ -79,23 +78,26 @@ func (task *checkServiceNameTask) updateEndPoint(
 		address = service.ServiceAddress
 	}
 
-	host := fmt.Sprintf("https://%s:%s", address, strconv.Itoa(service.ServicePort))
+	https := fmt.Sprintf("https://%s:%s", address, strconv.Itoa(service.ServicePort))
+	fmt.Println("https selected: ", https)
+
+	host := fmt.Sprintf("%s:%s", address, strconv.Itoa(service.ServicePort))
 	fmt.Println("host selected: ", host)
 
 	switch consulParse {
 	case parse.CertificatesAndSecurityKeys:
-		config.Certificates.EndPointGetCertificateCA = fmt.Sprintf("%s/%s", host, config.Certificates.APIPathCertificateCA)
-		config.Certificates.EndPointGetCertificateHost = fmt.Sprintf("%s/%s", host, config.Certificates.APIPathCertificateHost)
-		config.Certificates.EndPointGetCertificateHostKey = fmt.Sprintf("%s/%s", host, config.Certificates.APIPathCertificateHostKey)
-		config.SecurityKeys.EndPointGetPublicKeys = fmt.Sprintf("%s/%s", host, config.SecurityKeys.APIPathPublicKeys)
+		config.Certificates.EndPointGetCertificateCA = fmt.Sprintf("%s/%s", https, config.Certificates.APIPathCertificateCA)
+		config.Certificates.EndPointGetCertificateHost = fmt.Sprintf("%s/%s", https, config.Certificates.APIPathCertificateHost)
+		config.Certificates.EndPointGetCertificateHostKey = fmt.Sprintf("%s/%s", https, config.Certificates.APIPathCertificateHostKey)
+		config.SecurityKeys.EndPointGetPublicKeys = fmt.Sprintf("%s/%s", https, config.SecurityKeys.APIPathPublicKeys)
 		return true
 
 	case parse.SecurityRSAKeys:
-		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = fmt.Sprintf("%s/%s", host, config.SecurityRSAKeys.APIPathRSAPublicKeys)
+		config.SecurityRSAKeys.EndPointGetRSAPublicKeys = fmt.Sprintf("%s/%s", https, config.SecurityRSAKeys.APIPathRSAPublicKeys)
 		return true
 
 	case parse.EmailService:
-		config.EmailService.Host = strings.ReplaceAll(host, "https://", "")
+		config.EmailService.Host = host
 		return true
 
 	default:
