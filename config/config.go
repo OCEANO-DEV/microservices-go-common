@@ -197,6 +197,7 @@ func LoadConfig(production bool, path string) *Config {
 		MONGO_EXPORTER_PASSWORD := "MONGO_EXPORTER_PASSWORD"
 		SMTP_SERVER_USER := "SMTP_SERVER_USER"
 		SMTP_SERVER_PASSWORD := "SMTP_SERVER_PASSWORD"
+		PROMETHEUS_PUSHGATEWAY := "PROMETHEUS_PUSHGATEWAY"
 		if checkEnvFile() {
 			viper.Reset()
 			viper.SetConfigFile(".env")
@@ -212,6 +213,7 @@ func LoadConfig(production bool, path string) *Config {
 			config.MongoDbExporter.Password = viper.GetString(MONGO_EXPORTER_PASSWORD)
 			config.SMTPServer.Username = viper.GetString(SMTP_SERVER_USER)
 			config.SMTPServer.Password = viper.GetString(SMTP_SERVER_PASSWORD)
+			config.Prometheus.PROMETHEUS_PUSHGATEWAY = viper.GetString(PROMETHEUS_PUSHGATEWAY)
 		} else {
 			config.Certificates.HashPermissionEndPoint = os.Getenv(HASH)
 			config.Certificates.PasswordPermissionEndPoint = os.Getenv(PASSWORD)
@@ -224,6 +226,7 @@ func LoadConfig(production bool, path string) *Config {
 			config.MongoDbExporter.Password = os.Getenv(MONGO_EXPORTER_PASSWORD)
 			config.SMTPServer.Username = os.Getenv(SMTP_SERVER_USER)
 			config.SMTPServer.Password = os.Getenv(SMTP_SERVER_PASSWORD)
+			config.Prometheus.PROMETHEUS_PUSHGATEWAY = os.Getenv(PROMETHEUS_PUSHGATEWAY)
 		}
 
 		config.Nats.ClientId += "_" + uuid.New().String()
