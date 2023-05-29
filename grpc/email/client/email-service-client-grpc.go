@@ -123,9 +123,9 @@ func (s *EmailServiceClientGrpc) credentials() credentials.TransportCredentials 
 			tls.TLS_RSA_WITH_AES_256_GCM_SHA384,
 			tls.TLS_RSA_WITH_AES_256_CBC_SHA,
 		},
-		// InsecureSkipVerify: true,
-		GetCertificate: s.service.GetLocalCertificate,
-		RootCAs:        s.service.GetLocalCertificateCA(),
+		InsecureSkipVerify: true,
+		GetCertificate:     s.service.GetLocalCertificate,
+		RootCAs:            s.service.GetLocalCertificateCA(),
 	}
 
 	return credentials.NewTLS(tls)
